@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="side.family_title.mapper.admin.AdminMapper">
+
+    <resultMap id="familyTitleResultMap" type="FamilyTitle">
+        <id property="familyCode" column="family_code"/>
+        <result property="familyAppellation" column="family_appellation"/>
+        <result property="familyTitle" column="family_title"/>
+        <result property="familyRelation" column="family_relation"/>
+        <result property="familyGender" column="family_gender"/>
+        <result property="regDate" column="reg_date"/>
+    </resultMap>
+
+
+    <select id="isExist" parameterType="String" resultType="int">
+
+        SELECT
+            COUNT(*)
+        FROM
+            family_title AS f
+        WHERE
+            f.family_relation = #{familyRelation};
+    </select>
+
+    <!--가족 호칭 추가-->
+    <insert id="addFamilyTitle" parameterType="FamilyTitle">
+        <selectKey keyProperty="familyCode" resultType="String" order="BEFORE">
+            SELECT
+                (CASE
+                    WHEN
+                        COUNT(f.family_code) = 0  THEN CONCAT('fc_', CURDATE()+0, '_1')
+                    ELSE
+                        CONCAT('fc_', CURDATE()+0 ,'_' ,MAX(CAST(substring_index(f.family_code,'_',-1)AS UNSIGNED )+1))
+                    END) AS familyCode
+            FROM
+                family_title as f
+            WHERE
+                SUBSTRING_INDEX(SUBSTRING_INDEX(f.family_code,'_',2),'_',-1) = CURDATE()+0;
+
+        </selectKey>
+        INSERT INTO family_title
+            (family_code, family_appellation, family_title, family_relation, family_gender, reg_date)
+        VALUES
+            (#{familyCode}, #{familyAppellation}, #{familyTitle}, #{familyRelation}, #{familyGender}, now());
+    </insert>
+
+    <!--가족 호칭 조회-->
+    <select id="familyTitleList" resultMap="familyTitleResultMap">
+        SELECT
+            f.family_code,
+            f.family_title,
+            f.family_appellation,
+            f.family_relation,
+            f.family_gender,
+            f.reg_date
+        FROM
+            family_title AS f
+    </select>
+
+    <!--가족 호칭 삭제-->
+    <delete id="delFamilyTitle" parameterType="String">
+        DELETE
+            f
+        FROM
+            family_title AS f
+        WHERE
+            f.family_code = #{familyCode};
+    </delete>
+
+    <!--가족 호칭 수정-->
+    <update id="modifyTitle" parameterType="String">
+        UPDATE
+            family_title
+        SET
+            family_appellation = #{appellation},
+            family_title = #{title}
+        WHERE
+            family_code = #{familyCode};
+    </update>
+
+    <!--가족 관계 요약-->
+    <select id="shortRelation" parameterType="String" resultType="String">
+        SELECT
+            f.family_appellation
+        FROM
+            family_title AS f
+        WHERE
+            f.family_relation = #{beforRelation};
+    </select>
+
+</mapper>

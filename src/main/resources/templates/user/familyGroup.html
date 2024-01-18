@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/default}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FamilyTitle</title>
+    <!--  사용자별 css file 추가 부분 -->
+
+    <style>
+        .liActive {
+            border-right: 0;
+            background-color: #eeeeee;
+        }
+
+        .group {
+            cursor: pointer;
+
+            &:hover {
+                background-color: #eeeeee;
+            }
+        }
+
+        li {
+            float: left;
+            list-style: none;
+        }
+
+        .member:not(.modifyShadow) {
+            cursor: pointer;
+
+            &:hover {
+                box-shadow: #2aaacf 0 0 5px 5px !important;
+                border: #2aaacf 1px solid !important;
+            }
+        }
+
+        .modifyShadow {
+            box-shadow: #43ac6a 0 0 5px 5px !important;
+            border: #43ac6a 1px solid !important;
+        }
+
+        .modifyImage {
+            background-color: white !important;
+            cursor: pointer;
+
+            &:hover {
+                border: #2aaacf solid 2px;
+                content: url(/images/plus.svg);
+            }
+        }
+
+        .modifyInput {
+            background: white !important;
+            border: #ccc 1px solid !important;
+            border-radius: 10px;
+        }
+
+        .ui-datepicker-year {
+
+        }
+
+
+    </style>
+</head>
+
+
+<!-- 사용자 페이지별 javascript file -->
+<th:block layout:fragment="customJsFile">
+
+</th:block>
+
+
+<!--/* layout:decorate : 파일에서 사용자 정의로 선언한 조각에 작성한 html 코드 삽입 */-->
+<th:block layout:fragment="customContents">
+    <div class="row">
+        <div class="col-lg-2">
+        </div>
+
+        <div class="mainContents col-lg-8 row ">
+            <div class="col-lg-12 bg-primary text-center text-white font-weight-bold"
+                 style="margin:0; padding: 0; width: 50px; height: 40px; border-radius: 20px 20px 0 0;  box-shadow:  0.5rem 0.5rem 0.5rem rgba(0, 0, 0, 0.15)">
+                <h3 class="mt-lg-1" style="margin-left: 10%">Group List</h3>
+            </div>
+            <div class="col-lg-2" style="margin:0; padding: 0">
+                <ul class="list-group text-center w-100 border border-top-0 border-right-0"
+                    style="border-radius: 0 0 0 20px;">
+                    <li class="group list-group-item font-weight-bold liActive" style=" border-top:0">전체</li>
+                    <li class="group list-group-item font-weight-bold ">그룹1</li>
+                    <li class="group list-group-item font-weight-bold ">그룹2</li>
+                    <li class="group list-group-item font-weight-bold ">A fourth item</li>
+                </ul>
+            </div>
+            <div class="groupDiv col-lg-10 h-100" style="margin:0; padding: 0;">
+
+
+                <div class="groupContents bg-secondary w-100 h-100"
+                     style="border-radius: 0 0 20px 20px; box-shadow:  0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.15)">
+                    <h3>전체 목록</h3>
+
+                    <ul>
+                        <li class="mr-lg-3" th:each="l : ${familyProfileList}" style="position: relative">
+                            <div class="member shadow card  float-left mb-lg-3 "
+                                 style="width: 13rem; margin: 10px; border-radius: 15px;">
+                                <div class="card-header bg-primary text-center text-white"
+                                     style="padding: 2px; border-radius: 10px 10px 0 0">
+                                    <span class="font-weight-bold" th:text="${l.familyTitle.familyAppellation}"></span>
+                                    <span th:text="|(${l.familyTitle.familyTitle})|"></span>
+                                </div>
+
+                                <label class="imageAddLabel text-center mt-lg-1">
+                                    <img th:if="${l.image == null}" th:src="@{/images/no-image.svg}"
+                                         class="memberImage bg-secondary shadow-sm"
+                                         alt="회원 이미지" style="height: 125px; width: 125px; border-radius: 10px">
+                                    <img th:unless="${l.image == null}" th:src="@{l.image}"
+                                         class="memberImage bg-secondary shadow-sm"
+                                         alt="회원 이미지" style="height: 125px; width: 125px; border-radius: 10px">
+                                    <input class="imageAddBtn" type="file" accept="image/*" hidden="hidden"
+                                           disabled="disabled">
+                                </label>
+
+                                <div class="card-footer" style="padding: 0;">
+
+                                    <ul class="navbar-nav mr-auto mt-lg-2 mb-lg-3"
+                                        style="padding-left : 10%; padding-right: 10%;">
+                                        <li class="nav-item d-flex mb-lg-1"
+                                            style="border-bottom: 1px solid rgba(0, 0, 0, 0.125);">
+                                            <span class="text-primary float-left">Name.</span>
+                                            <input type="text" class="name form-control float-right ml-lg-3"
+                                                   th:value="${l.name}" th:placeholder="${l.name}"
+                                                   style="height:25px; border: none; background: transparent;text-align: right"
+                                                   disabled="disabled">
+                                        </li>
+                                        <li class="nav-item d-flex mb-lg-1"
+                                            style="border-bottom: 1px solid rgba(0, 0, 0, 0.125);">
+                                            <span class="text-primary float-left">Age.</span>
+                                            <input size="10" type="text" class="birth form-control float-right ml-lg-3"
+                                                   th:value="${l.birthday}" th:placeholder="${l.birthday}"
+                                                   style="height:25px; border: none; background: transparent;text-align: right"
+                                                   disabled="disabled">
+                                        </li>
+                                        <li class="nav-item">
+                                            <span class="text-primary">Memo.</span>
+                                            <div class="form-floating">
+                                                <textarea class="detailInfo form-control" th:value="${l.detailInfo}"
+                                                          placeholder=""
+                                                          style="border: 1px #ccc solid; border-radius: 10px"
+                                                          disabled="disabled"></textarea>
+                                            </div>
+                                        </li>
+                                    </ul>
+
+                                    <div class="btnGroup btn-group w-100 " role="group">
+                                        <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                                data-content="편집" data-placement="bottom" type="button"
+                                                class="modifyBtn btn btn-success" style="border-radius: 0 0 0 10px;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+                                            </svg>
+                                        </button>
+                                        <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                                data-content="상세정보" data-placement="bottom" type="button"
+                                                class="btn btn-primary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white"
+                                                 class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                                <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                            </svg>
+                                        </button>
+                                        <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                                data-content="삭제" data-placement="bottom" type="button"
+                                                class="btn btn-danger" style="border-radius: 0 0 10px 0;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="modifyGroup btn-group w-100" role="group" style="display: none">
+                                        <button type="button" class="modifyConfirmBtn btn btn-success font-weight-bold"
+                                                style="border-radius: 0 0 0 10px;">편집하기
+                                        </button>
+                                        <button type="button" class="modifyCancleBtn btn btn-danger font-weight-bold"
+                                                style="border-radius: 0 0 10px 0;">취소하기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="badge text-center text-white shadow position-absolute font-weight-bold rounded-pill bg-danger"
+                                  style="transform: translateX(-25px) translateY(5px); z-index: 1;">
+                  95+
+                </span>
+
+                        </li>
+
+
+                    </ul>
+
+
+                </div>
+
+
+            </div>
+            <div class="groupContents bg-secondary w-100"
+                 style="border-radius: 0 0 20px 20px; height: 800px; box-shadow:  0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.15); display: none">
+                <h3>목록1</h3>
+            </div>
+            <div class="groupContents bg-secondary w-100"
+                 style="border-radius: 0 0 20px 20px; height: 800px; box-shadow:  0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.15); display: none">
+                <h3>목록2</h3>
+            </div>
+            <div class="groupContents bg-secondary w-100"
+                 style="border-radius: 0 0 20px 20px; height: 800px; box-shadow:  0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.15); display: none">
+                <h3>목록3</h3>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="col-lg-3 "></div>
+    </div>
+
+</th:block>
+
+<!-- 사용자별 스크립트 작성 -->
+<th:block layout:fragment="customJsCode">
+    <script>
+
+        //팝오버
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+
+        //데이트피커
+        $('.birth').datepicker({
+            dateFormat: 'yy-mm-dd',
+            maxDate: new Date(),
+            defaultDate: new Date(),
+            showOtherMonths: true,          // 현재 월에 속하지 않는 날짜도 달력 위젯에 표시하도록 지시ㄷ
+            selectOtherMonths: true,        // 이전 월 및 다음 월의 날짜를 선택할 수 있도록 함
+            prevText: '이전 달',
+            nextText: '다음 달',
+            monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+            monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+            dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'],
+            showMonthAfterYear: true,
+            language: "ko",
+            autoclose: true,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '-100:+0',
+            showAnim: "slide"
+        })
+
+        //유효성 검사 validationCheck 함수
+        function validationCheck(target) {
+            let isValid = true;
+
+            $.each(target, function () {
+
+                let checkValue = $(this).val();
+
+                if (checkValue === null || checkValue === '' || checkValue === 'undefined') {
+                    isValid = false;
+                    let targetId = $(this).attr('id');
+                    let alertText = $(`label[for="${targetId}"]`).text();
+                    alert(`${alertText} 필수 입력 항목입니다.`);
+                    $(this).focus();
+                    return isValid;
+                }
+            });
+            return isValid;
+        }
+
+        //그룹 클릭 시 이벤트
+        $('.group').click(function () {
+            $('.group').removeClass('liActive');
+            $(this).addClass('liActive');
+            let idx = $(this).index();
+
+            $('.groupContents').hide();
+            $(`.groupDiv .groupContents:nth-child(${idx + 1})`).show();
+        })
+
+        //수정 클릭 시 이벤트
+        $('.modifyBtn').click(function () {
+            const member = $(this).parents('.member');
+
+            //초록색 이펙트
+            $(member).addClass('modifyShadow');
+
+            //버튼 변환
+            $(member).find('.btnGroup').hide();
+            $(member).find('.modifyGroup').show();
+
+            //수정 입력 폼 나타나게
+            $(member).find('.name').attr('disabled', false).addClass('modifyInput').addClass('modifyShadow');
+            $(member).find('.birth').attr('disabled', false).addClass('modifyInput').addClass('modifyShadow');
+            $(member).find('.detailInfo').attr('disabled', false).addClass('modifyShadow');
+
+            //이미지 추가 가능하도록
+            $(member).find('.imageAddBtn').attr('disabled', false)
+            $(member).find('.memberImage').addClass('modifyImage').addClass('modifyShadow');
+
+        })
+
+        //썸네일 이미지 추가 시, 이미지 표시
+        function setImageFromFile(input, expression) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $(expression).attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $('.imageAddBtn').change(function () {
+            if ($(this).val() != null) {
+                setImageFromFile(this, $(this).prev());
+            }
+        });
+
+        //편집 취소버튼 클릭
+        $('.modifyCancleBtn').click(function () {
+
+            const member = $(this).parents('.member');
+
+            //초록색 이펙트 삭제
+            $(member).removeClass('modifyShadow');
+
+            //버튼 변환
+            $(member).find('.modifyGroup').hide();
+            $(member).find('.btnGroup').show()
+
+
+            //수정 입력 폼 사라지게
+            $(member).find('.name').attr('disabled', true).removeClass('modifyInput').removeClass('modifyShadow');
+            $(member).find('.birth').attr('disabled', true).removeClass('modifyInput').removeClass('modifyShadow');
+            $(member).find('.detailInfo').attr('disabled', true).removeClass('modifyShadow');
+
+            //이미지 추가 불가능하게
+            $(member).find('.imageAddBtn').attr('disabled', true);
+            $(member).find('.memberImage').removeClass('modifyImage').removeClass('modifyShadow');
+        })
+
+        //편집 완료버튼 누를 시
+        $('.modifyConfirmBtn').click(function () {
+
+            const member = $(this).parents('.member');
+            let name = $(member).find('.name').val();
+            let birth = $(member).find('.birth').val();
+            let detail = $(member).find('.detailInfo').val();
+            let file = $(member).find('.imageAddBtn')[0].files[0];
+
+            let formData = new FormData();
+            formData.append('file',file);
+
+            const modifyObj = {
+                name: name,
+                birthday: birth,
+                detailInfo: detail,
+                image : file
+            };
+
+            console.log(modifyObj);
+            $.ajax({
+                url: '/user/uploadImage',
+                processData: false,	//기본값은 true
+                //ajax 통신을 통해 데이터를 전송할 때, 기본적으로 key와 value값을 Query String으로 변환해서 보냅니다.
+                contentType: false,	// multipart/form-data타입을 사용하기위해 false 로 지정합니다.
+                data: formData,
+                type: 'POST',
+                dataType:'json'
+            })
+
+
+            // $.ajax({
+            //     url: '/user/modifyFamilyMember',
+            //     // processData: false,	//기본값은 true
+            //     // //ajax 통신을 통해 데이터를 전송할 때, 기본적으로 key와 value값을 Query String으로 변환해서 보냅니다.
+            //     // contentType: false,	// multipart/form-data타입을 사용하기위해 false 로 지정합니다.
+            //     data: modifyObj,
+            //     type: 'POST',
+            //     dataType:'json'
+            //
+            // })
+
+
+
+
+        })
+
+    </script>
+
+</th:block>
+
+
+</html>

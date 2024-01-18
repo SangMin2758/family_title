@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/default}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FamilyTitle</title>
+    <!--  사용자별 css file 추가 부분 -->
+
+    <style>
+        :root {
+            --man : url(/images/family/man.png);
+            --girl : url(/images/family/girl.png);
+            --father : url(/images/family/father.png);
+            --mother : url(/images/family/mother.png);
+            --wife : url(/images/family/wife.png);
+            --husband : url(/images/family/husband.png);
+            --orderBrother : url(/images/family/orderBrother.png);
+            --orderSister : url(/images/family/orderSister.png);
+            --brother : url(/images/family/brother.png);
+            --sister : url(/images/family/sister.png);
+            --son : url(/images/family/son.png);
+            --daugher : url(/images/family/daugher.png);
+        }
+
+        li {
+            list-style-type: none;
+        }
+
+        .circleDiv {
+            position: relative;
+            width: 100%;
+        }
+
+        .circleDiv:after {
+            content: "";
+            display: block;
+            padding-bottom: 100%;
+        }
+
+        .targetMember {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+
+        .member {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+
+        }
+
+        .bi:hover {
+         fill: #43ac6a;
+        }
+
+        .member:hover {
+            & .familyCircle {
+                transition-duration: 0.3s;
+                background-color:#43ac6a;
+            }
+        }
+
+        .member[data-location="아버지"]{
+            transform: translateX(-85%) translateY(-173%);
+            transition-property: all;
+            transition-duration: 0.7s;
+        }
+
+
+        .member[data-location="어머니"] {
+            /*transform: translateX(68%) translateY(-187%);*/
+            transform: translateX(85%) translateY(-173%);
+            transition-property: all;
+            transition-duration: 0.7s;
+        }
+
+        .member[data-location="아내"] {
+            /*transform: translateX(170%) translateY(-105%);*/
+            transform: translateX(213%) translateY(-97%);
+            transition-property: all;
+            transition-duration: 0.7s;
+        }
+        .member[data-location="남편"] {
+            /*transform: translateX(170%) translateY(-105%);*/
+            transform: translateX(213%) translateY(-97%);
+            transition-property: all;
+            transition-duration: 0.7s;
+        }
+
+        .member[data-location="형"], .member[data-location="오빠"] {
+            /*transform: translateX(196px) translateY(35px);*/
+            transform: translateX(246%) translateY(32%);
+            transition-property: all;
+            transition-duration: 0.7s;
+        }
+
+        .member[data-location="누나"], .member[data-location="언니"] {
+            /*transform: translateX(128px) translateY(153px);*/
+            transform: translateX(161%) translateY(141%);
+            transition-property: all;
+            transition-duration: 0.7s;
+        }
+
+        .member[data-location="남동생"] {
+            /*transform: translateY(200px);*/
+            transform: translateY(185%);
+            transition-property: all;
+            transition-duration: 0.7s;
+        }
+
+        .member[data-location="여동생"] {
+            /*transform: translateX(-128px) translateY(153px);*/
+            transform: translateX(-161%) translateY(141%);
+            transition-property: all;
+            transition-duration: 0.7s;
+        }
+
+        .member[data-location="아들"] {
+            /*transform: translateX(-196px) translateY(35px);*/
+            transform: translateX(-246%) translateY(32%);
+            transition-property: all;
+            transition-duration: 0.7s;
+
+        }
+
+        .member[data-location="딸"] {
+            /*transform: translateX(-170px) translateY(-105px);*/
+            transform: translateX(-213%) translateY(-97%);
+            transition-property: all;
+            transition-duration: 0.7s;
+
+        }
+
+        .familyCircle[data-icon="남자"] {
+            content : var(--man);
+            border-radius: 50%;
+            background-color: #008cba;
+        }
+        .familyCircle[data-icon="여자"] {
+            content : var(--girl);
+            border-radius: 50%;
+            background-color: #ea2f10;
+        }
+        .familyCircle[data-icon="아버지"] {
+            content : var(--father);
+            border-radius: 50%;
+            background-color: #008cba;
+        }
+        .familyCircle[data-icon="남편"] {
+            content : var(--husband);
+            border-radius: 50%;
+            background-color: #008cba;
+        }
+        .familyCircle[data-icon="아내"] {
+            content : var(--wife);
+            border-radius: 50%;
+            background-color: #ea2f10;
+        }
+        .familyCircle[data-icon="어머니"] {
+            content : var(--mother);
+            border-radius: 50%;
+            background-color: #ea2f10;
+        }
+        .familyCircle[data-icon="형"],.familyCircle[data-icon="오빠"] {
+            content : var(--orderBrother);
+            border-radius: 50%;
+            background-color: #008cba;
+        }
+        .familyCircle[data-icon="누나"],.familyCircle[data-icon="언니"] {
+            content : var(--orderSister);
+            border-radius: 50%;
+            background-color: #ea2f10;
+        }
+        .familyCircle[data-icon="남동생"] {
+            content : var(--brother);
+            border-radius: 50%;
+            background-color: #008cba;
+        }
+        .familyCircle[data-icon="여동생"] {
+            content : var(--sister);
+            border-radius: 50%;
+            background-color: #ea2f10;
+        }
+        .familyCircle[data-icon="아들"] {
+            content : var(--son);
+            border-radius: 50%;
+            background-color: #008cba;
+        }
+        .familyCircle[data-icon="딸"] {
+            content : var(--daugher);
+            border-radius: 50%;
+            background-color: #ea2f10;
+        }
+
+        .goBack {
+            transform: translateX(0px) translateY(0px);
+            transition-property: all;
+            transition-duration: 0.7s;
+        }
+
+        .memberImage {
+            cursor: pointer;
+        }
+        .memberImage:hover {
+            border: #2aaacf solid 2px;
+            content: url(/images/plus.svg);
+        }
+
+
+    </style>
+</head>
+
+
+<!-- 사용자 페이지별 javascript file -->
+<th:block layout:fragment="customJsFile">
+
+</th:block>
+
+
+<!--/* layout:decorate : 파일에서 사용자 정의로 선언한 조각에 작성한 html 코드 삽입 */-->
+<th:block layout:fragment="customContents">
+    <div class="row">
+        <div class="col-lg-3"></div>
+
+        <div class=" mainContents col-lg-6 row">
+            <div class="circleDiv col-lg-8 shadow" style="background-color: #f7f7f7; border-radius: 30px; margin-top: 20px; margin-bottom: 30%;">
+
+                <div class="genderDiv mt-lg-3">
+                    <div class="float-left text-center shadow"
+                         style="background-color: white; border-radius: 10px; padding: 3px;">
+                        <p style="margin-bottom: 5px">My Gender</p>
+                        <input type="radio" id="male" name="gender" value="1" hidden="hidden" checked="checked">
+                        <label class="rounded-circle shadow" for="male" style="cursor : pointer; margin: 0">
+                            <svg id="maleIcon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#008cba"
+                                 class="bi bi-gender-male" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2H9.5zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+                            </svg>
+                        </label>
+                        <input type="radio" id="female" value="2" name="gender" hidden="hidden">
+                        <label class="rounded-circle" for="female" style="cursor : pointer; margin: 0">
+                            <svg id="femaleIcon" xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                 fill="currentColor"
+                                 class="bi bi-gender-female" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5z"/>
+                            </svg>
+                        </label>
+                    </div>
+
+
+                    <div class="float-right text-center shadow"
+                         style="background-color: white; border-radius: 10px; padding: 3px">
+                        <p style="margin-bottom: 5px">Back,Reset</p>
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-content="뒤로가기">
+                            <svg type="button" id="backBtn" xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                 fill="currentColor" class="bi bi-skip-backward" viewBox="0 0 16 16" >
+                                <path d="M.5 3.5A.5.5 0 0 1 1 4v3.248l6.267-3.636c.52-.302 1.233.043 1.233.696v2.94l6.267-3.636c.52-.302 1.233.043 1.233.696v7.384c0 .653-.713.998-1.233.696L8.5 8.752v2.94c0 .653-.713.998-1.233.696L1 8.752V12a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm7 1.133L1.696 8 7.5 11.367V4.633zm7.5 0L9.196 8 15 11.367V4.633z"/>
+                            </svg>
+                        </a>
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-content="새로고침">
+                            <svg type="button" id="resetBtn" xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                 fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="memberDiv">
+                    <div th:each=" l : ${familyList}" class="member text-center">
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                           th:data-content="|${l.familyAppellation} (${l.familyTitle})|">
+                            <img src="" class="familyCircle" style="border: groove grey 2px;" data-icon="">
+                            <br>
+                            <span class="nextRelation badge bg-white border border-dark rounded-pill font-weight-bold shadow"
+                                  th:text="${l.familyRelation}">나</span>
+                            <input th:value="${l.familyCode}" type="text" class="familyCode" hidden="hidden">
+                            <input th:value="${l.familyRelation}" type="text" class="familyRelation" hidden="hidden">
+                            <input th:value="${l.familyGender}" class="familyGender" hidden="hidden">
+                            <input th:value="${l.familyTitle}" type="text" class="familyTitle" hidden="hidden">
+                            <input th:value="${l.familyAppellation}" type="text" class="familyAppellation"
+                                   hidden="hidden">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="targetMemberDiv">
+                    <div class="targetMember text-center">
+                        <img src="" class="familyCircle" style="border: groove grey 2px;" data-icon="남자">
+                        <input id="targetRelation" hidden="hidden">
+                        <input id="targetTitle" hidden="hidden">
+                        <input id="targetFamilyCode" hidden="hidden">
+                        <input id="targetGender" hidden="hidden">
+                        <br>
+                        <span id="targetAppellation" class=" badge bg-white border border-dark rounded-pill font-weight-bold shadow">나</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-4">
+                <div class="h-75 border-left border-secondary">
+
+                    <div class="ml-lg-3 mt-lg-1">
+
+                        <div class="border border-secondary mx-auto d-block text-center mb-lg-2 shadow" style=" margin-top: 20px; width: 200px; border-radius: 15px">
+
+                            <div class="bg-secondary font-weight-bold shadow-sm" style="border-radius: 15px 15px 0px 0px;">
+                                <h5>Profile</h5>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="grey"
+                                 class="bi-person-square shadow" viewBox="0 0 16 16">
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12z"/>
+                            </svg>
+                            <br>
+                            <div class="mt-lg-2">
+                                <div class="form-group " style="margin-left: 20px; margin-bottom: 5px">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text border rounded-pill">호칭</span>
+                                        </div>
+                                        <sapn id="profileAppel" class="form-control form-control-sm border rounded-pill shadow-sm"
+                                              style=" transform : translateX(-20px); z-index: -1;"></sapn>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-left: 20px; margin-bottom: 5px;">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text border rounded-pill">명칭</span>
+                                        </div>
+                                        <sapn id="profileTitle" class="form-control form-control-sm border rounded-pill shadow-sm"
+                                              style=" transform : translateX(-20px); z-index: -1"></sapn>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="addFamilyBtn btn btn-success font-weight-bold btn-sm rounded-pill mb-lg-2 shadow" disabled="disabled" style="border: #8c8c8c 2px solid">
+                                구성원 추가
+                            </button>
+                        </div>
+
+<!--                        <div class="modal fade" id="profileAdd" tabindex="-1" aria-labelledby="modalLabel">-->
+<!--                            <div class="modal-dialog" role="document">-->
+<!--                                <div class="modal-content card mb-3 " style="max-width: 20rem;">-->
+<!--                                    <div class="card-header text-white bg-primary">가족 구성원 추가-->
+<!--                                        <button type="button" class="close text-white" data-dismiss="modal"-->
+<!--                                                aria-label="Close">-->
+<!--                                            <span aria-hidden="true">&times;</span>-->
+<!--                                        </button>-->
+<!--                                    </div>-->
+<!--                                    <div class="card-body">-->
+<!--                                        <div class="text-center">-->
+<!--                                            <label for="imageAddBtn">-->
+<!--                                                <img th:src="@{/images/no-image.svg}" class="memberImage bg-secondary "-->
+<!--                                                     alt="회원 이미지" style="height: 150px; width: 150px;">-->
+<!--                                            </label>-->
+<!--                                            <input id="imageAddBtn" type="file" accept="image/*" hidden="hidden">-->
+<!--                                        </div>-->
+
+<!--                                        <hr>-->
+<!--                                        <label for="name">이름</label>-->
+<!--                                        <input id="name" class="form-control form-control-sm">-->
+<!--                                        <br>-->
+<!--                                        <label class="form-label fw-bord text-dark" for="birthDay">생년월일</label>-->
+<!--                                        <input class="form-control form-control-sm" type="text" id="birthDay">-->
+<!--                                        <br>-->
+<!--                                        <label for="detailInfo">메모</label>-->
+<!--                                        <textarea class="form-control" id="detailInfo" rows="3"></textarea>-->
+
+<!--                                    </div>-->
+
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+                        <hr>
+                        <div class="mt-lg-3" >
+                            <h5 class="badge-secondary rounded-pill w-50 mx-auto d-block text-center shadow border border-light">Search Log</h5>
+                            <ul class="relationLog ml-lg-2 text-center" style="padding: 0">
+                            </ul>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="col-lg-3 "></div>
+
+    </div>
+
+</th:block>
+
+<!-- 사용자별 스크립트 작성 -->
+<th:block layout:fragment="customJsCode">
+    <script th:inline="javascript">
+
+
+        //가족 구성원 모으는 함수
+        function gather(obj) {
+            $(obj).each((idx, item) => {
+                $('.popover').remove();
+                $(item).css('transform','translateX(0px) translateY(0px)');
+                $(item).css('transition-property','all');
+                $(item).css('transition-duration','0.7s');
+            });
+        }
+
+        //가족 구성원 펼치는 함수
+        function expand(obj) {
+            setTimeout(function () {
+                $(obj).each((idx, item) => {
+                    let dataValue = $(item).find('.nextRelation').text();
+                    $(item).attr('data-location',dataValue);
+                    $(item).find('.familyCircle').attr('data-icon',dataValue);
+                });
+            }, 30)
+        }
+
+        //가족 호칭 크기 조절 함수
+        function circleSize() {
+            let circleWidth = $('.circleDiv').width() / 8;
+            $('.member').css('margin', `-${circleWidth / 2}px 0 0 -${circleWidth / 2}px`);
+            $('.targetMember').css('margin', `-${circleWidth / 2}px 0 0 -${circleWidth / 2}px`);
+            $('.familyCircle').css('width', `${circleWidth}px`).css('height', `${circleWidth}px`);
+        }
+
+
+        //페이지 진입 시 이벤트
+        $(document).ready(function () {
+            //가족 호칭 크기조절
+            circleSize();
+            //가족 구성원 펼치기
+            expand($('.member'));
+            //팝오버
+            $('[data-toggle="popover"]').popover();
+        });
+
+
+        //성별 별 2촌 이하 가족관계
+        function familyByGender(gender) {
+
+            const maleIcon = $('#maleIcon');
+            const femaleIcon = $('#femaleIcon');
+            let dataValue = '';
+
+            //성별 아이콘 변경
+            if (gender === '1') {
+                $(maleIcon).attr('fill', '#008cba');
+                $(maleIcon).parent().addClass('shadow');
+                $(femaleIcon).attr('fill', 'black');
+                $(femaleIcon).parent().removeClass('shadow');
+                dataValue = '남자';
+            } else {
+                $(maleIcon).attr('fill', 'black');
+                $(maleIcon).parent().removeClass('shadow');
+                $(femaleIcon).attr('fill', '#ea2f10');
+                $(femaleIcon).parent().addClass('shadow');
+                dataValue = '여자';
+            }
+
+            gather($('.member'));
+
+            //요소가 모두 모인 후 이벤트
+            setTimeout(function () {
+                const targetMember = $('.targetMember');
+
+                $(targetMember).html(`<img src="" class="familyCircle" style="border: groove grey 2px;">
+                                        <input id="targetRelation" hidden="hidden">
+                                        <input id="targetTitle" hidden="hidden">
+                                        <input id="targetFamilyCode" hidden="hidden">
+                                        <input id="targetGender" hidden="hidden">
+                                        <br>
+                                        <span id="targetAppellation" class="badge bg-white border border-dark rounded-pill font-weight-bold shadow">나</span>`)
+
+                //성별에 따라 나의 아이콘 바꾸기
+                $(targetMember).find('.familyCircle').attr('data-icon',dataValue);
+
+                $.ajax({
+                    url: '/user/familyListByGender',
+                    type: 'GET',
+                    data: {gender: gender}
+                }).done(function (data) {
+                    //다음 가족구성원 추가
+                    let nextFamily = '';
+
+                    $(data).each((idx, item) => {
+
+                        let gender = item.familyGender;
+                        let appellation = item.familyAppellation;
+                        let title = item.familyTitle;
+                        let code = item.familyCode;
+                        let relation = item.familyRelation;
+
+                        //가족 구성원 초기화
+                        nextFamily += `<div class="member text-center">
+                                            <a tabindex="0" role="button" data-toggle="popover" data-trigger="hover"  data-content="${appellation} (${title})" >
+                                                <img src="" class="familyCircle" style="border: groove grey 2px;">
+                                                <br>
+                                                <span class="nextRelation badge bg-white border border-dark rounded-pill font-weight-bold shadow">${appellation}</span>
+                                                <input value="${code}" type="text" class="familyCode" hidden="hidden">
+                                                <input value="${relation}" type="text" class="familyRelation" hidden="hidden">
+                                                <input value="${gender}" class="familyGender" hidden="hidden">
+                                                <input value="${title}" type="text" class="familyTitle" hidden="hidden">
+                                                <input value="${appellation}" type="text" class="familyAppellation" hidden="hidden">
+                                            </a>
+                                        </div>`
+
+                    });
+                    $('#memberDiv').html(nextFamily);
+
+                    //팝오버
+                    $('[data-toggle="popover"]').popover();
+                    //펼치기
+                    expand($('.member'));
+                    //가족 호칭 크기조절
+                    circleSize();
+
+                }).fail(function (err) {
+                    console.log(err)
+                });
+            }, 650)
+
+        }
+
+        //다음 가족 구성원 선택 시 이벤트
+        function selectFamily(obj, relation) {
+
+            const targetMember = $('.targetMember');
+            let selectedFamily = {};
+            let nextFamilyList = {};
+            //가족 구성원 뭉치기
+            gather($('.member'))
+
+            //다음 가족 구성원 탐색
+            $.ajax({
+                url: '/user/searchFamily',
+                type: 'GET',
+                data: {relation: relation}
+            }).done(function (data) {
+                selectedFamily = data.selectedFamily;
+                nextFamilyList = data.nextFamilyList;
+            }).fail(function (err) {
+                console.log(err)
+            });
+
+            //가족 구성원 모인 후 이벤트
+            setTimeout(function () {
+                    //선택된 가족 구성원 중앙으로
+                    let targetRelation = selectedFamily.familyRelation;
+                    let targetAppellation = selectedFamily.familyAppellation;
+                    let targetTitle = selectedFamily.familyTitle;
+                    let targetGender = selectedFamily.familyGender;
+                    let targetFamilycode = selectedFamily.familyCode;
+                    let nextRelation = selectedFamily.nextRelation;
+
+                    $('#targetRelation').val(targetRelation);
+                    $('#targetFamilyCode').val(targetFamilycode);
+                    $('#targetTitle').val(targetTitle);
+                    $('#targetGender').val(targetGender);
+                    $('#targetAppellation').text(targetAppellation);
+
+                    //선택된 가족 아이콘 바꾸기
+                    $('.targetMember').find('.familyCircle').attr('data-icon', nextRelation)
+
+                    //프로필 호칭, 명칭 변경
+                    $('#profileTitle').text(targetTitle);
+                    $('#profileAppel').text(targetAppellation);
+
+                    //다음 선택할 가족구성원 추가
+                    let nextFamily = '';
+
+                    $(nextFamilyList).each((idx, item) => {
+
+                        let gender = item.familyGender;
+                        let nextRelation = item.nextRelation;
+                        let appellation = item.familyAppellation;
+                        let title = item.familyTitle;
+                        let code = item.familyCode;
+                        let relation = item.familyRelation;
+
+                        //가족 구성원 초기화
+                        nextFamily += `<div class="member text-center">
+                                            <a tabindex="0" role="button" data-toggle="popover" data-trigger="hover"  data-content="${appellation} (${title})" >
+                                                <img src="" class="familyCircle" style="border: groove grey 2px;">
+                                                <br>
+                                                <span class="nextRelation badge bg-white border border-dark rounded-pill font-weight-bold shadow">${nextRelation}</span>
+                                                <input value="${code}" type="text" class="familyCode" hidden="hidden">
+                                                <input value="${relation}" type="text" class="familyRelation" hidden="hidden">
+                                                <input value="${gender}" class="familyGender" hidden="hidden">
+                                                <input value="${title}" type="text" class="familyTitle" hidden="hidden">
+                                                <input value="${appellation}" type="text" class="familyAppellation" hidden="hidden">
+                                            </a>
+                                        </div>`
+                    });
+
+                    $('#memberDiv').html(nextFamily);
+
+                    //팝오버
+                    $('[data-toggle="popover"]').popover();
+                    //펼치기
+                    expand($('.member'));
+                    //가족 호칭 크기조절
+                    circleSize();
+            }, 600)
+
+            return selectedFamily;
+        }
+
+
+        //호칭 검색할 가족 선택 시 이벤트
+        $(document).on('click', '.member', function () {
+
+            //성별 전환 못하도록, 구성원 추가 가능하도록
+            $('input[type="radio"]').attr('onclick', 'return false;');
+            let relation = $(this).find('.familyRelation').val();
+            $('.addFamilyBtn').attr('disabled',false);
+
+            selectFamily($(this),relation);
+
+
+            // 관계 로그 추가
+            const relationLog = $('.relationLog');
+            let addRelation = $(this).find('.nextRelation').text();
+            let appellation = $(this).find('.familyAppellation').val();
+            let gender = $(this).find('.familyGender').val();
+
+            if (gender === '1') {
+                gender = 'btn-primary';
+            } else {
+                gender = 'btn-danger';
+            }
+
+            if ($(relationLog).find('li').length >= 1) {
+                $(relationLog).append(`<li class="logArrow">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi-caret-down-fill" viewBox="0 0 16 16">
+                                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                        </svg>
+                                        </li>`)
+            }
+
+            $(relationLog).append(`<li class="log">
+                                <button class="font-weight-bold btn btn-sm rounded-pill ${gender} position-relative shadow" style="border: grey solid 2px">
+                                  ${addRelation}
+                                  <span class="font-weight-bold position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning shadow" style="border: grey solid 1px">
+                                    ${appellation}
+                                  </span></button></li>`)
+        });
+
+
+        //성별 바뀔 시 이벤트
+        $('input[type="radio"]').change(function () {
+            let gender = $('input[type=radio]:checked').val();
+            familyByGender(gender);
+        });
+
+
+        //새로고침 버튼 클릭
+        $('#resetBtn').click(function () {
+
+            //프로필 호칭, 명칭, 뎁스 초기화
+            $('#profileTitle').text('');
+            $('#profileAppel').text('');
+            $('.relationLog').html('');
+
+            //성별 전환 가능하도록, 구성원 추가 불가능하도록
+            $('input[type="radio"]').attr('onclick', 'return true;');
+            $('#male').prop('checked', true);
+            $('.addFamilyBtn').attr('disabled',true);
+
+            //가족 관계 초기화
+            familyByGender("1");
+        });
+
+
+        //뒤로가기 버튼 클릭
+        $('#backBtn').click(function () {
+
+            let relation = $('#targetRelation').val();
+            let isValid = true;
+
+            //가족구성원 선택 안했으면 이벤트X
+            if (relation === '') {
+                alert('처음 단계입니다');
+                isValid = false;
+            }
+            if (isValid) {
+                isValid = relation.includes('의');
+
+                if (isValid) {
+                    //가족 구성원 여러개 선택한 경우
+                    relation = relation.substring(0, relation.lastIndexOf('의'));
+                    const selectedFamily = selectFamily($('#targetRelation'),relation);
+
+                    //프로필 호칭, 명칭 변경
+                    let appellation = selectedFamily.familyAppellation;
+                    let title = selectedFamily.familyTitle;
+                    $('#profileTitle').text(appellation);
+                    $('#profileAppel').text(title);
+
+                    // 관계 로그 삭제
+                    $('.logArrow').last().remove();
+                    $('.log').last().remove();
+
+
+                } else {
+                    //가족 구성원 하나만 선택한 경우
+                    //성별 전환 가능하도록, 구성원 추가 못하도록
+                    $('input[type="radio"]').attr('onclick', 'return ture;');
+                    $('.addFamilyBtn').attr('disabled',true);
+                    //이벤트시작
+                    let gender = $('input[type=radio]:checked').val();
+                    familyByGender(gender);
+
+                    //프로필 호칭, 명칭, 뎁스 초기화
+                    $('#profileTitle').text('');
+                    $('#profileAppel').text('');
+                    $('.relationLog').html('');
+                }
+            }
+        })
+
+        //구성원 추가 버튼 클릭 시 모달 오픈
+        $('.addFamilyBtn').click(function () {
+            let familyCode = $('#targetFamilyCode').val();
+            console.log(familyCode);
+
+            if(confirm('정말 추가하시겠습니까?')) {
+                $.ajax({
+                    url:'/user/addFamilyMember',
+                    type:'GET',
+                    data: {familyCode : familyCode}
+                }).fail(function(err){
+                    console.log(err);
+                })
+            }
+        })
+
+
+        //썸네일 이미지 추가 시, 이미지 표시
+        function setImageFromFile(input, expression) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $(expression).attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $('#imageAddBtn').change(function () {
+            if ($(this).val() != null) {
+                setImageFromFile(this, '.memberImage');
+            }
+        });
+
+
+
+
+    </script>
+
+</th:block>
+
+
+</html>

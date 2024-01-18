@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.css}">
+
+  <link rel="stylesheet" th:href="@{/font/font.css}">
+
+  <!--데이트피커-->
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+
+  <style>
+    .active{
+      border-bottom: black solid 3px;
+      font-weight: bolder;
+    }
+  </style>
+
+</head>
+<body>
+
+
+<!-- header start -->
+<div th:replace="~{user/fragments/header :: headerFragment}"></div>
+<!-- header end -->
+
+
+<th:block layout:fragment="customContents">
+
+</th:block>
+
+<!--  footer start  -->
+<footer th:replace="~{user/fragments/footer :: footerFragment}"></footer>
+<!-- footer end -->
+
+<!-- Custom Theme Scripts -->
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/bootstrap/js/popper.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>-->
+
+<!--데이트피커-->
+
+<!--<script th:src="@{/js/bootstrap-datepicker.js}"></script>-->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>-->
+<!--<script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>-->
+
+<!-- 사용자별 스크립트 파일 -->
+<th:block layout:fragment="customJsFile">
+
+</th:block>
+
+<!-- 사용자별 스크립트 작성 -->
+<th:block layout:fragment="customJsCode">
+
+
+</th:block>
+
+<!-- 공용 js code -->
+<script type="text/javascript">
+  var currentPath = window.location.pathname;
+
+  if(currentPath === '/' || currentPath ==='') {
+    $('#headerNav').children('.nav-item:nth-child(1)').addClass('active');
+  } else if (currentPath === '/admin/addFamilyTitle') {
+    $('#headerNav').children('.nav-item:nth-child(2)').addClass('active');
+  }else if (currentPath === '/user/titleList') {
+    $('#headerNav').children('.nav-item:nth-child(3)').addClass('active');
+  }else if (currentPath === '/user/familyGroup') {
+    $('#headerNav').children('.nav-item:nth-child(2)').addClass('active');
+  }
+
+
+</script>
+
+</body>
+</html>

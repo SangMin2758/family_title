@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/default}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FamilyTitle</title>
+    <!--  사용자별 css file 추가 부분 -->
+
+    <style>
+        .addBtn:hover {
+            fill: #008cba;
+        }
+        .minusBtn:hover {
+            fill: #ea2f10;
+        }
+        li {
+            list-style-type: none;
+        }
+        .relationDetail {
+            cursor : pointer;
+        }
+        .relationDetail:hover{
+            fill : #008cba;
+        }
+    </style>
+</head>
+
+
+<!-- 사용자 페이지별 javascript file -->
+<th:block layout:fragment="customJsFile">
+
+</th:block>
+
+
+<!--/* layout:decorate : 파일에서 사용자 정의로 선언한 조각에 작성한 html 코드 삽입 */-->
+<th:block layout:fragment="customContents">
+    <div class="row" style="height: 1000px">
+        <div class="col-lg-3"></div>
+        <div class="mainContents col-lg-6">
+
+            <button class="modalOpenBtn btn btn-lg btn-primary font-weight-bold" data-bs-toggle="modal"
+                    data-bs-target="#modal">가족 호칭 추가asdf
+            </button><d<dasf>   </dasf></dasf>
+a
+            <div class="mt-lg-5">
+                <table class="table table-sm table-bordered">
+                    <thead class="table-secondary">
+                    <tr class="text-center">
+                        <th>가족관계</th>
+                        <th>호칭</th>
+                        <th>명칭</th>
+                        <th>성별</th>
+                        <th>추가 일자</th>
+                        <th>수정</th>
+                        <th>삭제</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each=" l : ${familyTitleList}">
+                        <td class="familyCode" hidden="hidden" th:text="${l.familyCode}"></td>
+                        <td>
+                            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" title="상세 가족관계" th:data-content="${l.familyRelation}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="grey" class="relationDetail bi bi-question-octagon" viewBox="0 0 16 16">
+                                    <path d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1 1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z"/>
+                                    <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+                                </svg>
+                            </a>
+                            <span th:text="${l.shortRelation}"></span>
+                        </td>
+                        <td class="appellation text-center" th:text="${l.familyAppellation}"></td>
+                        <td class="title text-center" th:text="${l.familyTitle}"></td>
+                        <td class="text-center" th:if="${l.familyGender == 1}" th:text="${'남성'}"></td>
+                        <td class="text-center" th:unless="${l.familyGender == 1}" th:text="${'여성'}"></td>
+                        <td class="text-center" th:text="${l.regDate}"></td>
+                        <td class="text-center dropright">
+                                <button class="modifyDropBtn btn btn-sm btn-primary dropdown-toggle font-weight-bold" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">수정</button>
+                                <div class="modifyForm dropdown-menu bg-secondary border-dark pl-lg-2" style="border-radius: 10px">
+                                    <input class="modifyFamilyCode" type="text" hidden="hidden" th:value="${l.familyCode}">
+                                    <label>호칭 </label>
+                                    <input type="text" class="modifyAppellation" style="width: 100px">
+                                    <br>
+                                    <label>명칭 </label>
+                                    <input type="text" class="modifyTitle" style="width: 100px">
+                                    <div class="text-center">
+                                        <button class="familyModifyBtn btn btn-sm btn-primary font-weight-bold">수정</button>
+                                        <button class="btn btn-sm btn-danger font-weight-bold">취소</button>
+                                    </div>
+
+                                </div>
+                        </td>
+                        <td class="text-center">
+                            <button class="familyDeleteBtn btn btn-sm btn-danger font-weight-bold">삭제</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="modalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-secondary">
+                        <h5 class="modal-title">가족 호칭 추가</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body row">
+
+                        <div class="col-lg-6 border-right">
+                            <div id="family">
+                                <input id="male" class="gender ml-lg-2" type="radio" name="gender" value="1"
+                                       checked="checked">
+                                <label for="male">남</label>
+                                <input id="female" class="gender" type="radio" name="gender" value="2">
+                                <label for="female">여</label>
+                                <br>
+                                <span class="member">나의
+                                        <span>
+                                            <select class="familySelect" style="width: 120px;">
+                                                <option value="아버지" data-gender="1">아버지</option>
+                                                <option value="어머니" data-gender="2">어머니</option>
+                                                <option value="아내" data-gender="2">아내</option>
+                                                <option value="형" data-gender="1">형</option>
+                                                <option value="누나" data-gender="2">누나</option>
+                                                <option value="남동생" data-gender="1">남동생</option>
+                                                <option value="여동생" data-gender="2">여동생</option>
+                                                <option value="아들" data-gender="1">아들</option>
+                                                <option value="딸" data-gender="2">딸</option>
+                                            </select>
+                                        </span>
+                                    </span>
+                                <svg type="button" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                     fill="currentColor" class="addBtn bi bi-plus-square" viewBox="0 0 16 16">
+                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 mt-lg-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="grey"
+                                         class="bi bi-person-square" viewBox="0 0 16 16">
+                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12z"/>
+                                    </svg>
+                                </div>
+                                <div class=" col-lg-8">
+                                    <label for="appellation">호칭 </label>
+                                    <input type="text" id="appellation" style="width: 100px">
+                                    <br>
+                                    <label for="title">명칭 </label>
+                                    <input type="text" id="title" style="width: 100px">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="memberAddBtn btn btn-primary">추가</button>
+                        <button type="button" class="closeBtn btn btn-danger" data-dismiss="modal">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-3 "></div>
+    </div>
+
+</th:block>
+
+<!-- 사용자별 스크립트 작성 -->
+<th:block layout:fragment="customJsCode">
+    <script>
+        const prevFamily = {
+            up: ['아버지', '어머니'],
+            down: ['형', '누나', '오빠', '언니', '남동생', '여동생', '아들', '딸'],
+            mate: ['남편', '아내']
+        };
+
+        const nextFamily = {
+            mail: {
+                up: [
+                    {gender: '1', name: '아버지'},
+                    {gender: '2', name: '어머니'},
+                    {gender: '1', name: '형'},
+                    {gender: '2', name: '누나'},
+                    {gender: '1', name: '남동생'},
+                    {gender: '2', name: '여동생'}
+                ],
+                down: [
+                    {gender: '2', name: '아내'},
+                    {gender: '1', name: '아들'},
+                    {gender: '2', name: '딸'}
+                ],
+                mate: [
+                    {gender: '1', name: '아버지'},
+                    {gender: '2', name: '어머니'},
+                    {gender: '1', name: '형'},
+                    {gender: '2', name: '누나'},
+                    {gender: '1', name: '남동생'},
+                    {gender: '2', name: '여동생'}
+                ]
+
+            },
+            femail: {
+                up: [
+                    {gender: '1', name: '아버지'},
+                    {gender: '2', name: '어머니'},
+                    {gender: '1', name: '오빠'},
+                    {gender: '2', name: '언니'},
+                    {gender: '1', name: '남동생'},
+                    {gender: '2', name: '여동생'}
+                ],
+                down: [
+                    {gender: '1', name: '남편'},
+                    {gender: '1', name: '아들'},
+                    {gender: '2', name: '딸'}
+                ],
+                mate: [
+                    {gender: '1', name: '아버지'},
+                    {gender: '2', name: '어머니'},
+                    {gender: '1', name: '오빠'},
+                    {gender: '2', name: '언니'},
+                    {gender: '1', name: '남동생'},
+                    {gender: '2', name: '여동생'}
+                ]
+
+            }
+        };
+
+        //팝오버
+        $(document).ready(function(){
+            $('[data-toggle="popover"]').popover();
+        });
+
+        //유효성 검사 validationCheck 함수
+        function validationCheck(target) {
+            let isValid = true;
+
+            $.each(target, function () {
+
+                let checkValue = $(this).val();
+
+                if (checkValue === null || checkValue === '' || checkValue === 'undefined') {
+                    isValid = false;
+                    let targetId = $(this).attr('id');
+                    let alertText = $(`label[for="${targetId}"]`).text();
+                    alert(`${alertText} 필수 입력 항목입니다.`);
+                    $(this).focus();
+                    return isValid;
+                }
+            });
+            return isValid;
+        }
+
+        $('.modalOpenBtn').click(function () {
+            $('#addModal').modal('show');
+        });
+
+        // + 버튼 클릭 시 이벤트
+        $(document).on('click', '.addBtn', function () {
+            const member = $('.member');
+            const length = $(member).length;
+            const target = $(member).last();
+            let lastSelectedtFamily = $('.familySelect').last();
+            let familyVal = $(lastSelectedtFamily).val();
+            let gender = $(lastSelectedtFamily).find('option:selected').data('gender');
+            let nextFamilyObj = {};
+
+            if (gender === 1) {
+                let nextFamilyTarget;
+
+                for (let key in prevFamily) {
+                    const value = prevFamily[key];
+                    value.forEach(val => {
+                        if (val === familyVal) {
+                            nextFamilyTarget = key;
+                            return false;
+                        }
+                    })
+                }
+                nextFamilyObj = nextFamily.mail[nextFamilyTarget];
+
+                //성별 라디오버튼 변화
+                $('#male').prop('checked', true);
+            } else {
+                let nextFamilyTarget;
+                for (let key in prevFamily) {
+                    const value = prevFamily[key];
+                    value.forEach(val => {
+                        if (val === familyVal) {
+                            nextFamilyTarget = key;
+                            return false;
+                        }
+                    })
+                }
+                nextFamilyObj = nextFamily.femail[nextFamilyTarget];
+
+                //성별 라디오버튼 변화
+                $('#female').prop('checked', true);
+            }
+
+
+            //옵션태그 추가
+            let option = '';
+            nextFamilyObj.forEach(val => {
+                let gender = val.gender;
+                let name = val.name;
+                option += `<option value="${name}" data-gender="${gender}">${name}</option>`;
+            });
+
+
+            //이전 가족 변환 못하도록
+            $(lastSelectedtFamily).prop('disabled', true);
+
+            //성별 전환 못하도록
+            $('.gender').attr('onclick', 'return false;');
+
+            if (length === 1) {
+                $(target).append(' 의');
+                $(target).after(`<br> <span class="member" style="margin-left: 30px">
+                                                            <span>
+                                                            <select class="familySelect" style="width: 120px;">
+                                                            ${option}
+                                                            </select>
+                                                        </span>
+                                                        </span>`);
+                $(this).after('  <svg type="button" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="minusBtn bi bi-dash-square" viewBox="0 0 16 16">\n' +
+                    '                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>\n' +
+                    '                                <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>\n' +
+                    '                            </svg>');
+            } else {
+                $(target).children('span').append('<span class="text"> 의</span>');
+                $(target).after(`<span class="member" style="margin-left: 30px">
+                                                            <span>
+                                                            <select class="familySelect" style="width: 120px;">
+                                                            ${option}
+                                                            </select>
+                                                        </span>
+                                                        </span>`);
+            }
+        });
+
+        // - 버튼 클릭 시 이벤트
+        $(document).on('click', '.minusBtn', function () {
+            const member = $('.member');
+            const target = $(member).last();
+            let length = $(member).length;
+
+
+            if (length === 2) {
+                $(target).prev('br').remove();
+                $(target).remove();
+                $(member).html('나의\n' +
+                    '                                        <span>\n' +
+                    '                                            <select class="familySelect" style="width: 120px;">\n' +
+                    '                                                <option value="아버지" data-gender="1">아버지</option>\n' +
+                    '                                                <option value="어머니" data-gender="2">어머니</option>\n' +
+                    '                                                <option value="아내" data-gender="2">아내</option>\n' +
+                    '                                                <option value="형" data-gender="1">형</option>\n' +
+                    '                                                <option value="누나" data-gender="2">누나</option>\n' +
+                    '                                                <option value="남동생" data-gender="1">남동생</option>\n' +
+                    '                                                <option value="여동생" data-gender="2">여동생</option>\n' +
+                    '                                                <option value="아들" data-gender="1">아들</option>\n' +
+                    '                                                <option value="딸" data-gender="2">딸</option>\n' +
+                    '                                            </select>\n' +
+                    '                                        </span>')
+                $(this).remove();
+                //성별 전환 가능하도록
+                $('#male').prop('checked', true);
+                $('.gender').attr('onclick', 'return true;');
+            } else {
+                let gender;
+                if (length === 3) {
+                    gender = $(target).prev().prev().prev().find('.familySelect').find('option:selected').data('gender');
+                } else {
+                    gender = $(target).prev().prev().find('.familySelect').find('option:selected').data('gender');
+                }
+
+                $(target).prev().find('.familySelect').prop('disabled', false);
+                $(target).prev().find('.text').remove();
+                $(target).remove();
+
+                //성벌 전환 되도록
+                if (gender === 1) {
+                    $('#male').prop('checked', true);
+                } else {
+                    $('#female').prop('checked', true);
+                }
+            }
+        });
+
+        $('.closeBtn').click(function () {
+            $('#family').html('<input id="male" class="gender ml-lg-2" type="radio" name="gender" value="1"\n' +
+                '                                       checked="checked">\n' +
+                '                                <label for="male">남</label>\n' +
+                '                                <input id="female" class="gender" type="radio" name="gender" value="2">\n' +
+                '                                <label for="female">여</label>\n' +
+                '                                <br>\n' +
+                '                                <span class="member">나의\n' +
+                '                                        <span>\n' +
+                '                                            <select class="familySelect" style="width: 120px;">\n' +
+                '                                                <option value="아버지" data-gender="1">아버지</option>\n' +
+                '                                                <option value="어머니" data-gender="2">어머니</option>\n' +
+                '                                                <option value="아내" data-gender="2">아내</option>\n' +
+                '                                                <option value="형" data-gender="1">형</option>\n' +
+                '                                                <option value="누나" data-gender="2">누나</option>\n' +
+                '                                                <option value="남동생" data-gender="1">남동생</option>\n' +
+                '                                                <option value="여동생" data-gender="2">여동생</option>\n' +
+                '                                                <option value="아들" data-gender="1">아들</option>\n' +
+                '                                                <option value="딸" data-gender="2">딸</option>\n' +
+                '                                            </select>\n' +
+                '                                        </span>\n' +
+                '                                    </span>\n' +
+                '                                <svg type="button" xmlns="http://www.w3.org/2000/svg" width="20" height="20"\n' +
+                '                                     fill="currentColor" class="addBtn bi bi-plus-square" viewBox="0 0 16 16">\n' +
+                '                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>\n' +
+                '                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>\n' +
+                '                                </svg>');
+
+            $('#appellation').val('');
+            $('#title').val('');
+        });
+
+
+        //성별 바꿀 시 명칭 변경
+        $('.gender').change(function () {
+            let gender = $('input[name=gender]:checked').val();
+            const familySelect = $('.familySelect');
+            let isChange = $(familySelect).length;
+
+            if (isChange === 1) {
+                if (gender === '1') {
+                    $(familySelect).html('<option value="아버지" data-gender="1">아버지</option>\n' +
+                        '                                                <option value="어머니" data-gender="2">어머니</option>\n' +
+                        '                                                <option value="아내" data-gender="2">아내</option>\n' +
+                        '                                                <option value="형" data-gender="1">형</option>\n' +
+                        '                                                <option value="누나" data-gender="2">누나</option>\n' +
+                        '                                                <option value="남동생" data-gender="1">남동생</option>\n' +
+                        '                                                <option value="여동생" data-gender="2">여동생</option>\n' +
+                        '                                                <option value="아들" data-gender="1">아들</option>\n' +
+                        '                                                <option value="딸" data-gender="2">딸</option>');
+                } else {
+                    $(familySelect).html('<option value="아버지" data-gender="1">아버지</option>\n' +
+                        '                                                <option value="어머니" data-gender="2">어머니</option>\n' +
+                        '                                                <option value="남편" data-gender="1">남편</option>\n' +
+                        '                                                <option value="오빠" data-gender="1">오빠</option>\n' +
+                        '                                                <option value="언니" data-gender="2">언니</option>\n' +
+                        '                                                <option value="남동생" data-gender="1">남동생</option>\n' +
+                        '                                                <option value="여동생" data-gender="2">여동생</option>\n' +
+                        '                                                <option value="아들" data-gender="1">아들</option>\n' +
+                        '                                                <option value="딸" data-gender="2">딸</option>');
+                }
+            }
+        });
+
+        $('.memberAddBtn').click(function () {
+            let familyRelation = '';
+            const validCheck = $('#appellation, #title');
+            let family = $('.familySelect');
+            let gender;
+
+            //호칭, 명칭 입력했는지 유효성 검사.
+            let isValid = validationCheck(validCheck);
+
+            //가족 관계 추가.
+            if (isValid) {
+                $(family).each((idx, item) => {
+                    let relation = $(item).val();
+                    if (idx === $(family).length - 1) {
+                        familyRelation += relation;
+                        gender = $(item).find('option:selected').data('gender');
+                    } else {
+                        familyRelation += `${relation}의 `;
+                    }
+                });
+
+                //가족관계 중복됐는지 체크.
+                $.ajax({
+                    type: 'GET',
+                    url: '/admin/isExist',
+                    data: {familyRelation: familyRelation}
+                }).done(function (data) {
+
+                    //중복되었다면 알림, 중복되지 않았다면 가족호칭 추가
+                    if (!data) {
+                        alert('이미 추가된 가족괸계입니다.');
+                    } else if (confirm('정말 추가하시겠습니까?')) {
+                        const family = {
+                            familyTitle: $('#title').val(),
+                            familyAppellation: $('#appellation').val(),
+                            familyRelation: familyRelation,
+                            familyGender: gender
+                        }
+                        $.ajax({
+                            type: 'POST',
+                            url: '/admin/addFamilyTitle',
+                            contentType: 'application/json',
+                            data: JSON.stringify(family),
+                            dataType: 'text'
+                        }).done(function (data) {
+                            location.href = data;
+                        }).fail(function (err) {
+                            console.log(err)
+                        });
+                    }
+                }).fail(function (err) {
+                    console.log(err);
+                });
+            }
+
+        });
+
+        //가족 호칭 삭제
+        $('.familyDeleteBtn').click(function () {
+            let familyCode = $(this).parents('tr').children('.familyCode').text();
+            if (confirm('정말 삭제하시겠습니까?')) {
+                location.href =`/admin/delFamilyTitle?familyCode=${familyCode}`;
+            }
+        });
+
+        //수정 드롭다운 버튼 클릭 시 기존 호칭 명칭 입력
+        $('.modifyDropBtn').click(function () {
+            let appellation = $(this).parents('tr').find('.appellation').text();
+            let title = $(this).parents('tr').find('.title').text();
+
+            $(this).next().find('.modifyAppellation').val(appellation);
+            $(this).next().find('.modifyTitle').val(title);
+        });
+
+        $('.familyModifyBtn').click(function() {
+            let appellation = $(this).parents('.modifyForm').find('.modifyAppellation').val();
+            let title = $(this).parents('.modifyForm').find('.modifyTitle').val();
+            let familyCode = $(this).parents('.modifyForm').find('.modifyFamilyCode').val();
+            location.href=`/admin/modifyTitle?familyCode=${familyCode}&appellation=${appellation}&title=${title}`;
+        });
+
+
+
+
+
+
+    </script>
+
+</th:block>
+
+
+</html>

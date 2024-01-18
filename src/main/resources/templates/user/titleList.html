@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/default}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FamilyTitle</title>
+    <!--  사용자별 css file 추가 부분 -->
+
+    <style>
+        .addBtn:hover {
+            fill: #008cba;
+        }
+
+        .minusBtn:hover {
+            fill: #ea2f10;
+        }
+
+        li {
+            list-style-type: none;
+        }
+
+        .relationDetail {
+            cursor: pointer;
+        }
+
+        .relationDetail:hover {
+            fill: #008cba;
+        }
+    </style>
+</head>
+
+
+<!-- 사용자 페이지별 javascript file -->
+<th:block layout:fragment="customJsFile">
+
+</th:block>
+
+
+<!--/* layout:decorate : 파일에서 사용자 정의로 선언한 조각에 작성한 html 코드 삽입 */-->
+<th:block layout:fragment="customContents">
+    <div class="row" style="height: 1000px">
+        <div class="col-lg-3"></div>
+        <div class="mainContents col-lg-6">
+
+
+            <div class="input-group mb-3" style="width: 300px">
+                <span class="input-group-text">호칭 검색</span>
+                <input id="search" type="text" class="form-control" placeholder="호칭을 입력해주세요" onkeyup="search()">
+            </div>
+
+            <div class="mt-lg-3">
+                <table class="table table-sm table-bordered">
+                    <thead class="table-secondary">
+                    <tr class="text-center">
+                        <th>호칭</th>
+                        <th>명칭</th>
+                        <th>성별</th>
+                        <th>가족관계</th>
+                        <th>구성원 추가</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each=" l : ${familyTitleList}">
+                        <td class="familyCode" hidden="hidden" th:text="${l.familyCode}"></td>
+                        <td class="appellation text-center " th:text="${l.familyAppellation}"></td>
+                        <td class="title text-center " th:text="${l.familyTitle}"></td>
+                        <td class="text-center font-weight-bold text-primary" th:if="${l.familyGender == 1}" th:text="${'남성'}"></td>
+                        <td class="text-center font-weight-bold text-danger" th:unless="${l.familyGender == 1}" th:text="${'여성'}"></td>
+                      <td class="text-center ">
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" title="상세 가족관계"
+                           th:data-content="${l.familyRelation}">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="grey"
+                               class="relationDetail bi bi-question-octagon" viewBox="0 0 16 16">
+                            <path d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1 1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z"/>
+                            <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+                          </svg>
+                        </a>
+                        <span th:text="${l.shortRelation}"></span>
+                      </td>
+                        <td class="text-center">
+                            <button class="addBtn btn btn-sm btn-success font-weight-bold">추가</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="modalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-secondary">
+                        <h5 class="modal-title">가족 호칭 추가</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body row">
+
+                        <div class="col-lg-6 border-right">
+                            <div id="family">
+                                <input id="male" class="gender ml-lg-2" type="radio" name="gender" value="1"
+                                       checked="checked">
+                                <label for="male">남</label>
+                                <input id="female" class="gender" type="radio" name="gender" value="2">
+                                <label for="female">여</label>
+                                <br>
+                                <span class="member">나의
+                                        <span>
+                                            <select class="familySelect" style="width: 120px;">
+                                                <option value="아버지" data-gender="1">아버지</option>
+                                                <option value="어머니" data-gender="2">어머니</option>
+                                                <option value="아내" data-gender="2">아내</option>
+                                                <option value="형" data-gender="1">형</option>
+                                                <option value="누나" data-gender="2">누나</option>
+                                                <option value="남동생" data-gender="1">남동생</option>
+                                                <option value="여동생" data-gender="2">여동생</option>
+                                                <option value="아들" data-gender="1">아들</option>
+                                                <option value="딸" data-gender="2">딸</option>
+                                            </select>
+                                        </span>
+                                    </span>
+                                <svg type="button" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                     fill="currentColor" class="addBtn bi bi-plus-square" viewBox="0 0 16 16">
+                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 mt-lg-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="grey"
+                                         class="bi bi-person-square" viewBox="0 0 16 16">
+                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12z"/>
+                                    </svg>
+                                </div>
+                                <div class=" col-lg-8">
+                                    <label for="appellation">호칭 </label>
+                                    <input type="text" id="appellation" style="width: 100px">
+                                    <br>
+                                    <label for="title">명칭 </label>
+                                    <input type="text" id="title" style="width: 100px">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="memberAddBtn btn btn-primary">추가</button>
+                        <button type="button" class="closeBtn btn btn-danger" data-dismiss="modal">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-3 "></div>
+    </div>
+
+</th:block>
+
+<!-- 사용자별 스크립트 작성 -->
+<th:block layout:fragment="customJsCode">
+    <script>
+
+        //팝오버
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+
+        //유효성 검사 validationCheck 함수
+        function validationCheck(target) {
+            let isValid = true;
+
+            $.each(target, function () {
+
+                let checkValue = $(this).val();
+
+                if (checkValue === null || checkValue === '' || checkValue === 'undefined') {
+                    isValid = false;
+                    let targetId = $(this).attr('id');
+                    let alertText = $(`label[for="${targetId}"]`).text();
+                    alert(`${alertText} 필수 입력 항목입니다.`);
+                    $(this).focus();
+                    return isValid;
+                }
+            });
+            return isValid;
+        }
+
+        //검색
+        function search() {
+          let val = $('#search').val();
+
+          if(val === '') {
+                $('.appellation').each((idx,item) => {
+                    $(item).parents('tr').attr('hidden',false);
+                })
+            } else {
+                $('.appellation').each((idx,item) => {
+                    if($(item).text().indexOf(val) === -1) {
+                        $(item).parents('tr').attr('hidden',true);
+                    } else {
+                        $(item).parents('tr').attr('hidden',false);
+                    }
+                })
+            }
+        }
+
+
+    </script>
+
+</th:block>
+
+
+</html>
