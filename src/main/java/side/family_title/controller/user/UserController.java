@@ -1,10 +1,10 @@
 package side.family_title.controller.user;
 
 
-import com.nimbusds.jose.shaded.gson.JsonObject;
+import com.google.gson.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,7 @@ public class UserController {
         List<FamilyTitle> familyTitleList = adminService.familyTitleList();
 
         model.addAttribute("familyTitleList",familyTitleList);
-        return"/user/titleList";
+        return"user/titleList";
     }
 
     //가족 구성원 추가
@@ -95,38 +95,39 @@ public class UserController {
 
         log.info("추가된 가족 구성원 : {}", familyProfileList);
 
-        return"/user/familyGroup";
+        return"user/familyGroup";
     }
 
 
     //프로필 사진 업로드
     @PostMapping(value="/uploadImage", produces = "application/json")
     @ResponseBody
-    public JsonObject uploadImage (@RequestParam("file") MultipartFile uploadFile,
+    public Map<String,String> uploadImage (@RequestParam("file") MultipartFile multipartFile,
                                    HttpServletRequest request) {
 
-
-        JsonObject result = new JsonObject();
+        Map<String,String> result = new HashMap<>();
 
         String fileRoot = getOsFileRootPath();
-
-        String orginalName = uploadFile.getOriginalFilename();
-        assert orginalName != null;
+        //OS 별 저장될 외부 파일 경로 지정
+        String orginalName = multipartFile.getOriginalFilename();
+        //기존 파일명
         String fileName = orginalName.substring(orginalName.lastIndexOf(File.separator) + 1);
+        //기존 파일명이 전체 경로로 들어올 경우 마지막 파일 명만 남기기.
         String uuid = UUID.randomUUID().toString();
-        String saveName = fileRoot + File.separator + uuid + "_" + fileName;
-        System.out.println("saveName: " + saveName);
-        System.out.println("fileRoot: " + fileRoot);
-
-        Path savePath = Paths.get(saveName);
+        // 중복 방지를 위해 랜덤 파일명 생성
+        String saveName = uuid + "_" + fileName;
+        // 저장될 파일 이름 : [랜덤이름] + [_] + [기존 파일명]
+        String saveFullName = fileRoot + saveName;
+        // 저장될 경로 + 저장될 파일 이름
+        Path savePath = Paths.get(saveFullName);
 
         try {
-            uploadFile.transferTo(savePath);
-            result.addProperty("fileName", saveName);
-            result.addProperty("responseCode", "success");
+            multipartFile.transferTo(savePath);
+            result.put("saveName",saveName);
+            result.put("responseCode", "success");
 
         } catch (IOException e) {
-            result.addProperty("responseCode", "error");
+            result.put("responseCode", "error");
             e.printStackTrace();
         }
 
@@ -135,7 +136,7 @@ public class UserController {
         return result;
     }
 
-    //저장 경로 설정
+    //OS 별 파일 저장 경로 설정
     public String getOsFileRootPath(){
         String os = System.getProperty("os.name").toLowerCase();
         String rootPath = "/home/springboot/resources/fmaily_image/";
@@ -152,9 +153,23 @@ public class UserController {
     //가족 구성원 정보 수정
     @PostMapping("/modifyFamilyMember")
     @ResponseBody
-    public void modifyFamilyMember (@RequestBody FamilyProfile modifyObj) {
+    public FamilyProfile modifyFamilyMember (@RequestBody FamilyProfile modifyObj) {
 
-        System.out.println(modifyObj);
+        log.info("수정할 정보 : {}" , modifyObj);
+
+        userService.modifyFamilyMember(modifyObj);
+
+        return  modifyObj;
+    }
+
+    //가족 구성원 삭제
+    @GetMapping("/deleteFamilyMember")
+    public String deleteFamilyMember (@RequestParam(name="profileCode") String profileCode) {
+
+        System.out.println(profileCode + "<--------profileCode");
+        userService.deleteFamilyMember(profileCode);
+
+        return "redirect:/user/familyGroup";
     }
 
 }

@@ -47,7 +47,7 @@ public class AdminController {
     public String addFamilyTitle (@RequestBody FamilyTitle familyTitle) {
         adminService.addFamilyTitle(familyTitle);
 
-        return "/admin/addFamilyTitle";
+        return "admin/addFamilyTitle";
     }
 
     //가족 호칭 삭제

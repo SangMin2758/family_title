@@ -132,5 +132,30 @@
             f.member_id = #{memberId};
     </select>
 
+    <!--추가한 가족 구성원 정보 수정-->
+    <update id="modifyFamilyMember" parameterType="FamilyProfile" >
+        UPDATE
+            family_profile
+        <set>
+            <if test="name != ''">name = #{name},</if>
+            <if test="birthday != ''">birthday = #{birthday},</if>
+            <if test="image != ''">image = #{image},</if>
+            <if test="detailInfo != ''">detail_info = #{detailInfo},</if>
+        </set>
+        WHERE
+            profile_code = #{profileCode}
+    </update>
+
+    <!--추가된 가족 구성원 삭제-->
+    <delete id="deleteFamilyMember" parameterType="String">
+
+            DELETE
+                family_profile
+            FROM
+                family_profile
+            WHERE
+                 profile_code = #{profileCode}
+
+    </delete>
 
 </mapper>

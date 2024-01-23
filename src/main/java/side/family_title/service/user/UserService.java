@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import side.family_title.dto.FamilyProfile;
 import side.family_title.dto.FamilyTitle;
-import side.family_title.mapper.admin.AdminMapper;
 import side.family_title.mapper.user.UserMapper;
 
 import java.util.List;
@@ -43,5 +42,11 @@ public class UserService {
     public List<FamilyProfile> familyMemberList (String memberId) {
         return userMapper.familyMemberList(memberId);
     }
+
+    //추가한 가족 구성원 정보 수정
+    public void modifyFamilyMember (FamilyProfile familyProfile) {userMapper.modifyFamilyMember(familyProfile);}
+
+    //추가한 가족 구성원 삭제
+    public void deleteFamilyMember (String profileCode){userMapper.deleteFamilyMember(profileCode);}
 }
 

@@ -25,4 +25,11 @@ public interface UserMapper {
     //추가한 가족 구성원 전체 조회
     public List<FamilyProfile> familyMemberList (String memberId);
 
+    //추가한 가족 구성원 정보 수정
+    public void modifyFamilyMember (FamilyProfile familyProfile);
+
+    //추가한 가족 구성원 삭제
+    public void deleteFamilyMember (String profileCode);
+
+
 }

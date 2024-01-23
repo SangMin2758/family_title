@@ -51,7 +51,7 @@
             }
         }
 
-        .modifyInput {
+        .modifyInputShadow {
             background: white !important;
             border: #ccc 1px solid !important;
             border-radius: 10px;
@@ -113,7 +113,7 @@
                                     <img th:if="${l.image == null}" th:src="@{/images/no-image.svg}"
                                          class="memberImage bg-secondary shadow-sm"
                                          alt="회원 이미지" style="height: 125px; width: 125px; border-radius: 10px">
-                                    <img th:unless="${l.image == null}" th:src="@{l.image}"
+                                    <img th:unless="${l.image == null}" th:src="|/familyImage/${l.image}|"
                                          class="memberImage bg-secondary shadow-sm"
                                          alt="회원 이미지" style="height: 125px; width: 125px; border-radius: 10px">
                                     <input class="imageAddBtn" type="file" accept="image/*" hidden="hidden"
@@ -127,7 +127,7 @@
                                         <li class="nav-item d-flex mb-lg-1"
                                             style="border-bottom: 1px solid rgba(0, 0, 0, 0.125);">
                                             <span class="text-primary float-left">Name.</span>
-                                            <input type="text" class="name form-control float-right ml-lg-3"
+                                            <input type="text" class="modifyName form-control float-right ml-lg-3"
                                                    th:value="${l.name}" th:placeholder="${l.name}"
                                                    style="height:25px; border: none; background: transparent;text-align: right"
                                                    disabled="disabled">
@@ -135,15 +135,15 @@
                                         <li class="nav-item d-flex mb-lg-1"
                                             style="border-bottom: 1px solid rgba(0, 0, 0, 0.125);">
                                             <span class="text-primary float-left">Age.</span>
-                                            <input size="10" type="text" class="birth form-control float-right ml-lg-3"
+                                            <input size="10" type="text" class="modifyBirth form-control float-right ml-lg-3"
                                                    th:value="${l.birthday}" th:placeholder="${l.birthday}"
                                                    style="height:25px; border: none; background: transparent;text-align: right"
-                                                   disabled="disabled">
+                                                   disabled="disabled" readonly="readonly">
                                         </li>
                                         <li class="nav-item">
                                             <span class="text-primary">Memo.</span>
                                             <div class="form-floating">
-                                                <textarea class="detailInfo form-control" th:value="${l.detailInfo}"
+                                                <textarea class="modifyDetailInfo form-control" th:text="${l.detailInfo}"
                                                           placeholder=""
                                                           style="border: 1px #ccc solid; border-radius: 10px"
                                                           disabled="disabled"></textarea>
@@ -170,7 +170,7 @@
                                         </button>
                                         <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
                                                 data-content="삭제" data-placement="bottom" type="button"
-                                                class="btn btn-danger" style="border-radius: 0 0 10px 0;">
+                                                class="delBtn btn btn-danger" style="border-radius: 0 0 10px 0;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                                 <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
@@ -178,14 +178,19 @@
                                         </button>
                                     </div>
                                     <div class="modifyGroup btn-group w-100" role="group" style="display: none">
-                                        <button type="button" class="modifyConfirmBtn btn btn-success font-weight-bold"
+                                        <button class="modifyConfirmBtn btn btn-success font-weight-bold"
                                                 style="border-radius: 0 0 0 10px;">편집하기
                                         </button>
-                                        <button type="button" class="modifyCancleBtn btn btn-danger font-weight-bold"
+                                        <button class="modifyCancleBtn btn btn-danger font-weight-bold"
                                                 style="border-radius: 0 0 10px 0;">취소하기
                                         </button>
                                     </div>
                                 </div>
+                                <input class="profileCode" hidden="hidden" th:value="${l.profileCode}">
+                                <input class="name" hidden="hidden" th:value="${l.name}">
+                                <input class="birthday" hidden="hidden" th:value="${l.birthday}">
+                                <input class="image" hidden="hidden" th:value="${l.image}">
+                                <input class="detailInfo" hidden="hidden" th:value="${l.detailInfo}">
                             </div>
                             <span class="badge text-center text-white shadow position-absolute font-weight-bold rounded-pill bg-danger"
                                   style="transform: translateX(-25px) translateY(5px); z-index: 1;">
@@ -234,7 +239,7 @@
         });
 
         //데이트피커
-        $('.birth').datepicker({
+        $('.modifyBirth').datepicker({
             dateFormat: 'yy-mm-dd',
             maxDate: new Date(),
             defaultDate: new Date(),
@@ -288,7 +293,10 @@
         $('.modifyBtn').click(function () {
             const member = $(this).parents('.member');
 
-            //초록색 이펙트
+            //다른 수정 폼 창 닫기
+            $('div.modifyShadow').find('.modifyCancleBtn').click();
+
+            //초록색 이펙트 추가
             $(member).addClass('modifyShadow');
 
             //버튼 변환
@@ -296,15 +304,14 @@
             $(member).find('.modifyGroup').show();
 
             //수정 입력 폼 나타나게
-            $(member).find('.name').attr('disabled', false).addClass('modifyInput').addClass('modifyShadow');
-            $(member).find('.birth').attr('disabled', false).addClass('modifyInput').addClass('modifyShadow');
-            $(member).find('.detailInfo').attr('disabled', false).addClass('modifyShadow');
+            $(member).find('.modifyName').attr('disabled', false).addClass('modifyInputShadow').addClass('modifyShadow');
+            $(member).find('.modifyBirth').attr('disabled', false).addClass('modifyInputShadow').addClass('modifyShadow');
+            $(member).find('.modifyDetailInfo').attr('disabled', false).addClass('modifyShadow');
 
             //이미지 추가 가능하도록
             $(member).find('.imageAddBtn').attr('disabled', false)
             $(member).find('.memberImage').addClass('modifyImage').addClass('modifyShadow');
-
-        })
+        });
 
         //썸네일 이미지 추가 시, 이미지 표시
         function setImageFromFile(input, expression) {
@@ -328,6 +335,23 @@
 
             const member = $(this).parents('.member');
 
+            //기존 정보
+            let image = $(member).find('.image').val();
+            let name = $(member).find('.name').val();
+            let birthday = $(member).find('.birthday').val();
+            let detailInfo = $(member).find('.detailInfo').val();
+
+            //기존 정보로 변경
+            if(image === '') {
+                $(member).find('.memberImage').attr('src','/images/no-image.svg');
+            } else{
+                $(member).find('.memberImage').attr('src',`/familyImage/${image}`);
+            }
+            $(member).find('.modifyName').val(name);
+            $(member).find('.modifyBirth').val(birthday);
+            $(member).find('.modifyDetailInfo').val(detailInfo);
+
+
             //초록색 이펙트 삭제
             $(member).removeClass('modifyShadow');
 
@@ -335,62 +359,101 @@
             $(member).find('.modifyGroup').hide();
             $(member).find('.btnGroup').show()
 
-
             //수정 입력 폼 사라지게
-            $(member).find('.name').attr('disabled', true).removeClass('modifyInput').removeClass('modifyShadow');
-            $(member).find('.birth').attr('disabled', true).removeClass('modifyInput').removeClass('modifyShadow');
-            $(member).find('.detailInfo').attr('disabled', true).removeClass('modifyShadow');
+            $(member).find('.modifyName').attr('disabled', true).removeClass('modifyInputShadow').removeClass('modifyShadow');
+            $(member).find('.modifyBirth').attr('disabled', true).removeClass('modifyInputShadow').removeClass('modifyShadow');
+            $(member).find('.modifyDetailInfo').attr('disabled', true).removeClass('modifyShadow');
 
             //이미지 추가 불가능하게
             $(member).find('.imageAddBtn').attr('disabled', true);
             $(member).find('.memberImage').removeClass('modifyImage').removeClass('modifyShadow');
-        })
+        });
+
 
         //편집 완료버튼 누를 시
         $('.modifyConfirmBtn').click(function () {
 
             const member = $(this).parents('.member');
-            let name = $(member).find('.name').val();
-            let birth = $(member).find('.birth').val();
-            let detail = $(member).find('.detailInfo').val();
-            let file = $(member).find('.imageAddBtn')[0].files[0];
+            let profileCode = $(member).find('.profileCode').val();
+            let originInfo = $(member).find('.name, .birthday, .detailInfo');
+            let modifyInfo = $(member).find('.modifyName, .modifyBirth, .modifyDetailInfo');
 
+            let isModifyed = false;
+
+            //수정할 데이터 담을 객체.
+            const modifyObj = {
+                profileCode : profileCode,
+                name: '',
+                birthday: '',
+                detailInfo: '',
+                image : ''
+            };
+
+            //기존 데이터를 순회하며 수정된 데이터가 있으면 modifyObj 객체에 할당.
+            originInfo.each((idx,item) => {
+                let modfiyInfo = $(modifyInfo[idx]).val();
+                let originInfo = $(item).val();
+
+                if(modfiyInfo !== originInfo) {
+                    let className = $(item).attr('class');
+                    modifyObj[className] = modfiyInfo;
+                    isModifyed = true;
+                }
+            })
+
+            //업로드할 사진 파일을 담는 폼데이터
+            let file = $(member).find('.imageAddBtn')[0].files[0];
             let formData = new FormData();
             formData.append('file',file);
 
-            const modifyObj = {
-                name: name,
-                birthday: birth,
-                detailInfo: detail,
-                image : file
-            };
+            //프로필 사진을 변경했을 때만 사진 업로드.
+            if(file !== undefined) {
+                $.ajax({
+                    url : '/user/uploadImage',
+                    processData : false,	//기본값은 true
+                    //ajax 통신을 통해 데이터를 전송할 때, 기본적으로 key와 value값을 Query String으로 변환해서 전송.
+                    contentType : false,	// multipart/form-data타입을 사용하기위해 false 로 지정.
+                    data : formData,
+                    type : 'POST',
+                    dataType :'json',
+                    async : false //동기 방식
+                }).done(function(result){
+                    let saveName = result.saveName;
+                    modifyObj.image = saveName;
+                    isModifyed = true;
+                })
+            }
 
-            console.log(modifyObj);
-            $.ajax({
-                url: '/user/uploadImage',
-                processData: false,	//기본값은 true
-                //ajax 통신을 통해 데이터를 전송할 때, 기본적으로 key와 value값을 Query String으로 변환해서 보냅니다.
-                contentType: false,	// multipart/form-data타입을 사용하기위해 false 로 지정합니다.
-                data: formData,
-                type: 'POST',
-                dataType:'json'
-            })
+            //변경된 데이터가 하나라도 있을 시 업데이트 작업 진행.
+            if(isModifyed) {
+                $.ajax({
+                    url : '/user/modifyFamilyMember',
+                    type :'POST',
+                    data : JSON.stringify(modifyObj),
+                    contentType : 'application/json'
+                }).done(function (modifyFamilyProfile) {
 
+                    for(let key in modifyFamilyProfile) {
+                        let value = modifyFamilyProfile[key];
+                        if(value !== '' && value !== null) {
+                                $(member).find(`.${key}`).val(value);
+                        }
+                    }
 
-            // $.ajax({
-            //     url: '/user/modifyFamilyMember',
-            //     // processData: false,	//기본값은 true
-            //     // //ajax 통신을 통해 데이터를 전송할 때, 기본적으로 key와 value값을 Query String으로 변환해서 보냅니다.
-            //     // contentType: false,	// multipart/form-data타입을 사용하기위해 false 로 지정합니다.
-            //     data: modifyObj,
-            //     type: 'POST',
-            //     dataType:'json'
-            //
-            // })
+                    $(member).find('.modifyCancleBtn').click();
+                })
+            } else {
+                $(member).find('.modifyCancleBtn').click();
+            }
+        })
 
+        //추가된 가족 삭제버튼 클릭
+        $('.delBtn').click(function(){
+            let profileCode = $(this).parents('.member').find('.profileCode').val();
 
-
-
+            if(confirm('정말로 삭제하시겠습니까?')) {
+                location.href = `/user/deleteFamilyMember?profileCode=${profileCode}`;
+            }
         })
 
     </script>
