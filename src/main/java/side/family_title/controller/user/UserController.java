@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import side.family_title.dto.FamilyGroup;
 import side.family_title.dto.FamilyProfile;
 import side.family_title.dto.FamilyTitle;
 import side.family_title.service.admin.AdminService;
@@ -89,11 +90,15 @@ public class UserController {
     @GetMapping("/familyGroup")
     public String familyGroupPage (Model model) {
 
-        List<FamilyProfile> familyProfileList = userService.familyMemberList("id001");
+        //전체 가족 구성원 조회
+        List<FamilyProfile> allFamilyList = userService.allFamilyList("id001");
+        //그룹 별 가족 구성원 조회
+        List<FamilyGroup> familyGroupList = userService.familyMemberListByGroup("id001");
 
-        model.addAttribute("familyProfileList", familyProfileList);
+        model.addAttribute("allFamilyList", allFamilyList);
+        model.addAttribute("familyGroupList", familyGroupList);
 
-        log.info("추가된 가족 구성원 : {}", familyProfileList);
+        log.info("추가된 가족 구성원 : {}", familyGroupList);
 
         return"user/familyGroup";
     }
@@ -170,6 +175,29 @@ public class UserController {
         userService.deleteFamilyMember(profileCode);
 
         return "redirect:/user/familyGroup";
+    }
+
+    //가족 구성원 그룹 추가
+    @PostMapping(value="/addFamilyGroup")
+    @ResponseBody
+    public String addFamilyGroup (@RequestBody FamilyGroup familyGroup) {
+
+        log.info("그룹 추가 회원 목록 : {}", familyGroup);
+        userService.addFamilyGroup(familyGroup);
+
+        return "/user/familyGroup";
+    }
+
+    // 그룹 삭제
+    @PostMapping("/deleteFamilyGroup")
+    @ResponseBody
+    public String deleteFamilyGroup (@RequestParam(name="groupCodeList[]") List<String> groupCodeList){
+
+        log.info("삭제할 그룹 그룹코드 목록 : {}", groupCodeList);
+
+        userService.deleteGroup(groupCodeList);
+
+        return "/user/familyGroup";
     }
 
 }

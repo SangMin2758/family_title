@@ -1,6 +1,7 @@
 package side.family_title.mapper.user;
 
 import org.apache.ibatis.annotations.Mapper;
+import side.family_title.dto.FamilyGroup;
 import side.family_title.dto.FamilyProfile;
 import side.family_title.dto.FamilyTitle;
 
@@ -23,13 +24,31 @@ public interface UserMapper {
     public void addFamilyMember (String familyCode, String memberId);
 
     //추가한 가족 구성원 전체 조회
-    public List<FamilyProfile> familyMemberList (String memberId);
+    public List<FamilyProfile> allFamilyList (String memberId);
+
+    //추가한 가족 구성원 그룹 별 조회
+    public List<FamilyGroup> familyMemberListByGroup (String memberId);
 
     //추가한 가족 구성원 정보 수정
     public void modifyFamilyMember (FamilyProfile familyProfile);
 
+    //가족 구성원과 그룹 관계 삭제
+    public void deleteProfileAssociation (String profileCode);
+
     //추가한 가족 구성원 삭제
     public void deleteFamilyMember (String profileCode);
+
+    //가족 구성원 그릅 추가
+    public void addFamilyGroup (FamilyGroup familyGroup);
+
+    //가족 구성원 그릅 관계 맺기
+    public void groupAssociation (String groupCode, String profileCode);
+
+    //구성원 그릅과 그룹 관계 삭제
+    public void deleteGroupAssociation (String groupCode);
+    //구성원 그룹 삭제
+    public void deleteGroup (String groupCode);
+
 
 
 }

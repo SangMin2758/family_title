@@ -27,13 +27,19 @@
             list-style: none;
         }
 
-        .member:not(.modifyShadow) {
+        .groupAddShadow {
             cursor: pointer;
-
+            box-shadow: grey 0 0 5px 5px !important;
+            border: grey 1px solid !important;
             &:hover {
                 box-shadow: #2aaacf 0 0 5px 5px !important;
                 border: #2aaacf 1px solid !important;
             }
+        }
+        .groupAddCheckShadow {
+            cursor: pointer;
+            box-shadow: #2aaacf 0 0 8px 8px !important;
+            border: #2aaacf 1px solid !important;
         }
 
         .modifyShadow {
@@ -57,9 +63,38 @@
             border-radius: 10px;
         }
 
-        .ui-datepicker-year {
+        .groupAdd {
+            &:hover{
+                background-color: #008cba;
+                color : white !important;
+                font-size: 25px !important;
+            }
+            cursor: pointer;
 
         }
+        .groupDelete{
+            &:hover{
+                background-color: #f04124;
+                color : white !important;
+                font-size: 25px !important;
+            }
+           cursor : pointer;
+        }
+        .groupAddConfirm, .groupAddCancel, .groupDeleteConfirm, .groupDeleteCancel {
+            &:hover{
+                background-color: #43ac6a !important;
+                color : white !important;
+                font-size: 25px !important;
+            }
+            cursor: pointer;
+
+        }
+
+
+        .group:has(.deleteGroupCheck:checked) {
+            color: #f04124;
+        }
+
 
 
     </style>
@@ -86,41 +121,63 @@
             <div class="col-lg-2" style="margin:0; padding: 0">
                 <ul class="list-group text-center w-100 border border-top-0 border-right-0"
                     style="border-radius: 0 0 0 20px;">
-                    <li class="group list-group-item font-weight-bold liActive" style=" border-top:0">전체</li>
-                    <li class="group list-group-item font-weight-bold ">그룹1</li>
-                    <li class="group list-group-item font-weight-bold ">그룹2</li>
-                    <li class="group list-group-item font-weight-bold ">A fourth item</li>
+                    <li class="group list-group-item font-weight-bold liActive" style=" border-top:0; padding: 0; height: 35px ; line-height: 35px;">ALL</li>
+                    <li th:each="gl : ${familyGroupList}" class="group list-group-item font-weight-bold d-flex align-content-center" style="padding: 0; height: 35px ; line-height: 35px; ">
+                        <label style="margin :0; width: 100%; height: 100%;"><input type="checkbox" class="mr-lg-2 deleteGroupCheck" hidden="hidden" disabled="disabled"  th:value="${gl.groupCode}"><span th:text="${gl.groupName}"> </span></label>
+                    </li>
+                    <li class=" font-weight-bold " style="padding: 0">
+                        <div class="groupModifyDiv row" style="margin:0;  height: 40px;">
+                            <div class="groupAdd col-lg-6 h-100 text-primary" style="margin:0; padding: 0; border : 2px solid #008cba ; border-radius: 0 0 0 20px ; font-size: 20px">+</div>
+                            <div class="groupDelete col-lg-6 h-100 text-danger" style="margin:0; padding: 0; border: 2px solid #f04124; border-left: 1px solid grey;  font-size: 20px">-</div>
+                        </div>
+                        <div class="groupAddDiv row" style="margin:0;  height: 40px; display: none">
+                            <div class="groupAddConfirm col-lg-6 h-100 text-white bg-primary" style="margin:0; padding: 0; border-radius: 0 0 0 20px ; font-size: 20px">추가</div>
+                            <div class="groupAddCancel col-lg-6 h-100 text-white bg-danger" style="margin:0; padding: 0; border-left: 1px solid grey;  font-size: 20px">취소</div>
+                        </div>
+                        <div class="groupDeleteDiv row" style="margin:0;  height: 40px; display: none">
+                            <div class="groupDeleteConfirm col-lg-6 h-100 text-white bg-primary" style="margin:0; padding: 0; border-radius: 0 0 0 20px ; font-size: 20px">삭제</div>
+                            <div class="groupDeleteCancel col-lg-6 h-100 text-white bg-danger" style="margin:0; padding: 0; border-left: 1px solid grey;  font-size: 20px">취소</div>
+                        </div>
+                    </li>
                 </ul>
             </div>
+
             <div class="groupDiv col-lg-10 h-100" style="margin:0; padding: 0;">
 
-
                 <div class="groupContents bg-secondary w-100 h-100"
-                     style="border-radius: 0 0 20px 20px; box-shadow:  0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.15)">
-                    <h3>전체 목록</h3>
+                     style="border-radius: 0 0 20px 20px; box-shadsw:  0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.15)">
+                    <br>
+                    <div class="bg-white w-50 mx-auto shadow mb-lg-5" style="margin : 0; border-radius: 15px">
+                        <h3 class="text-center">전체 목록</h3>
+
+                    </div>
 
                     <ul>
-                        <li class="mr-lg-3" th:each="l : ${familyProfileList}" style="position: relative">
+                        <li class="mr-lg-3" th:each="l : ${allFamilyList}" style="position: relative">
+
+
                             <div class="member shadow card  float-left mb-lg-3 "
                                  style="width: 13rem; margin: 10px; border-radius: 15px;">
-                                <div class="card-header bg-primary text-center text-white"
-                                     style="padding: 2px; border-radius: 10px 10px 0 0">
-                                    <span class="font-weight-bold" th:text="${l.familyTitle.familyAppellation}"></span>
-                                    <span th:text="|(${l.familyTitle.familyTitle})|"></span>
-                                </div>
+                                <label class="groupAddLabel"   style="margin : 0; padding: 0;">
 
-                                <label class="imageAddLabel text-center mt-lg-1">
-                                    <img th:if="${l.image == null}" th:src="@{/images/no-image.svg}"
-                                         class="memberImage bg-secondary shadow-sm"
-                                         alt="회원 이미지" style="height: 125px; width: 125px; border-radius: 10px">
-                                    <img th:unless="${l.image == null}" th:src="|/familyImage/${l.image}|"
-                                         class="memberImage bg-secondary shadow-sm"
-                                         alt="회원 이미지" style="height: 125px; width: 125px; border-radius: 10px">
-                                    <input class="imageAddBtn" type="file" accept="image/*" hidden="hidden"
-                                           disabled="disabled">
-                                </label>
+                                    <div class="card-header bg-primary text-center text-white"
+                                         style="padding: 2px; border-radius: 10px 10px 0 0">
+                                        <input class="groupAddCheck" type="checkbox" hidden="hidden" disabled="disabled">
+                                        <span class="font-weight-bold" th:text="${l.familyTitle.familyAppellation}"></span>
+                                        <span th:text="|(${l.familyTitle.familyTitle})|"></span>
+                                    </div>
 
-                                <div class="card-footer" style="padding: 0;">
+                                    <label class="imageAddLabel text-center d-block mx-auto mt-lg-1">
+                                        <img th:if="${l.image == null}" th:src="@{/images/no-image.svg}"
+                                             class="memberImage bg-secondary shadow-sm"
+                                             alt="회원 이미지" style="height: 125px; width: 125px; border-radius: 10px">
+                                        <img th:unless="${l.image == null}" th:src="|/familyImage/${l.image}|"
+                                             class="memberImage bg-secondary shadow-sm"
+                                             alt="회원 이미지" style="height: 125px; width: 125px; border-radius: 10px">
+                                        <input class="imageAddBtn" type="file" accept="image/*" hidden="hidden"
+                                               disabled="disabled">
+                                    </label>
+
 
                                     <ul class="navbar-nav mr-auto mt-lg-2 mb-lg-3"
                                         style="padding-left : 10%; padding-right: 10%;">
@@ -129,7 +186,7 @@
                                             <span class="text-primary float-left">Name.</span>
                                             <input type="text" class="modifyName form-control float-right ml-lg-3"
                                                    th:value="${l.name}" th:placeholder="${l.name}"
-                                                   style="height:25px; border: none; background: transparent;text-align: right"
+                                                   style="height:25px; border: none; background: transparent;text-align: right; "
                                                    disabled="disabled">
                                         </li>
                                         <li class="nav-item d-flex mb-lg-1"
@@ -150,6 +207,9 @@
                                             </div>
                                         </li>
                                     </ul>
+                                </label>
+
+                                <div class="card-footer" style="padding: 0;">
 
                                     <div class="btnGroup btn-group w-100 " role="group">
                                         <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
@@ -196,17 +256,123 @@
                                   style="transform: translateX(-25px) translateY(5px); z-index: 1;">
                   95+
                 </span>
-
                         </li>
-
-
                     </ul>
-
-
                 </div>
 
+                <div class="groupContents bg-secondary w-100 h-100"
+                     style="border-radius: 0 0 20px 20px; box-shadsw:  0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.15); display: none" th:each="gl : ${familyGroupList}">
+                    <br>
+                    <div class="bg-white w-50 mx-auto shadow mb-lg-5" style="margin : 0; border-radius: 15px">
+                            <h3 class="text-center" th:text="${gl.groupName}"></h3>
+                    </div>
+                    <ul>
+                        <li class="mr-lg-3" th:each="l : ${gl.familyProfileList}" style="position: relative">
 
+                            <div class="member shadow card  float-left mb-lg-3 "
+                                 style="width: 13rem; margin: 10px; border-radius: 15px;">
+                                <label class="groupAddLabel"  style="margin : 0; padding: 0;">
+
+                                <div class="card-header bg-primary text-center text-white"
+                                     style="padding: 2px; border-radius: 10px 10px 0 0">
+                                    <input class="groupAddCheck" type="checkbox" hidden="hidden" disabled="disabled">
+                                    <span class="font-weight-bold" th:text="${l.familyTitle.familyAppellation}"></span>
+                                    <span th:text="|(${l.familyTitle.familyTitle})|"></span>
+                                </div>
+
+                                <label class="imageAddLabel text-center d-block mx-auto mt-lg-1">
+                                    <img th:if="${l.image == null}" th:src="@{/images/no-image.svg}"
+                                         class="memberImage bg-secondary shadow-sm"
+                                         alt="회원 이미지" style="height: 125px; width: 125px; border-radius: 10px">
+                                    <img th:unless="${l.image == null}" th:src="|/familyImage/${l.image}|"
+                                         class="memberImage bg-secondary shadow-sm"
+                                         alt="회원 이미지" style="height: 125px; width: 125px; border-radius: 10px">
+                                    <input class="imageAddBtn" type="file" accept="image/*" hidden="hidden"
+                                           disabled="disabled">
+                                </label>
+
+                                    <ul class="navbar-nav mr-auto mt-lg-2 mb-lg-3"
+                                        style="padding-left : 10%; padding-right: 10%;">
+                                        <li class="nav-item d-flex mb-lg-1"
+                                            style="border-bottom: 1px solid rgba(0, 0, 0, 0.125);">
+                                            <span class="text-primary float-left">Name.</span>
+                                            <input type="text" class="modifyName form-control float-right ml-lg-3"
+                                                   th:value="${l.name}" th:placeholder="${l.name}"
+                                                   style="height:25px; border: none; background: transparent;text-align: right; "
+                                                   disabled="disabled">
+                                        </li>
+                                        <li class="nav-item d-flex mb-lg-1"
+                                            style="border-bottom: 1px solid rgba(0, 0, 0, 0.125);">
+                                            <span class="text-primary float-left">Age.</span>
+                                            <input size="10" type="text" class="modifyBirth form-control float-right ml-lg-3"
+                                                   th:value="${l.birthday}" th:placeholder="${l.birthday}"
+                                                   style="height:25px; border: none; background: transparent;text-align: right"
+                                                   disabled="disabled" readonly="readonly">
+                                        </li>
+                                        <li class="nav-item">
+                                            <span class="text-primary">Memo.</span>
+                                            <div class="form-floating">
+                                                <textarea class="modifyDetailInfo form-control" th:text="${l.detailInfo}"
+                                                          placeholder=""
+                                                          style="border: 1px #ccc solid; border-radius: 10px"
+                                                          disabled="disabled"></textarea>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </label>
+
+                                <div class="card-footer" style="padding: 0;">
+
+                                    <div class="btnGroup btn-group w-100 " role="group">
+                                        <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                                data-content="편집" data-placement="bottom" type="button"
+                                                class="modifyBtn btn btn-success" style="border-radius: 0 0 0 10px;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+                                            </svg>
+                                        </button>
+                                        <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                                data-content="상세정보" data-placement="bottom" type="button"
+                                                class="btn btn-primary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white"
+                                                 class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                                <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                            </svg>
+                                        </button>
+                                        <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                                data-content="삭제" data-placement="bottom" type="button"
+                                                class="delBtn btn btn-danger" style="border-radius: 0 0 10px 0;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="modifyGroup btn-group w-100" role="group" style="display: none">
+                                        <button class="modifyConfirmBtn btn btn-success font-weight-bold"
+                                                style="border-radius: 0 0 0 10px;">편집하기
+                                        </button>
+                                        <button class="modifyCancleBtn btn btn-danger font-weight-bold"
+                                                style="border-radius: 0 0 10px 0;">취소하기
+                                        </button>
+                                    </div>
+                                </div>
+                                <input class="profileCode" hidden="hidden" th:value="${l.profileCode}">
+                                <input class="name" hidden="hidden" th:value="${l.name}">
+                                <input class="birthday" hidden="hidden" th:value="${l.birthday}">
+                                <input class="image" hidden="hidden" th:value="${l.image}">
+                                <input class="detailInfo" hidden="hidden" th:value="${l.detailInfo}">
+                                </div>
+                            <span class="badge text-center text-white shadow position-absolute font-weight-bold rounded-pill bg-danger"
+                                  style="transform: translateX(-25px) translateY(5px); z-index: 1;">
+                  95+
+                </span>
+                        </li>
+                    </ul>
+                </div>
             </div>
+
             <div class="groupContents bg-secondary w-100"
                  style="border-radius: 0 0 20px 20px; height: 800px; box-shadow:  0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.15); display: none">
                 <h3>목록1</h3>
@@ -263,19 +429,11 @@
         function validationCheck(target) {
             let isValid = true;
 
-            $.each(target, function () {
 
-                let checkValue = $(this).val();
-
-                if (checkValue === null || checkValue === '' || checkValue === 'undefined') {
+                if (target === null || target === '' || target === 'undefined') {
                     isValid = false;
-                    let targetId = $(this).attr('id');
-                    let alertText = $(`label[for="${targetId}"]`).text();
-                    alert(`${alertText} 필수 입력 항목입니다.`);
-                    $(this).focus();
-                    return isValid;
                 }
-            });
+
             return isValid;
         }
 
@@ -433,14 +591,15 @@
                     contentType : 'application/json'
                 }).done(function (modifyFamilyProfile) {
 
-                    for(let key in modifyFamilyProfile) {
-                        let value = modifyFamilyProfile[key];
-                        if(value !== '' && value !== null) {
-                                $(member).find(`.${key}`).val(value);
-                        }
-                    }
+                    const modifyMember = $(`.profileCode[value='${profileCode}']`).parents('.member')
 
-                    $(member).find('.modifyCancleBtn').click();
+                        for(let key in modifyFamilyProfile) {
+                            let value = modifyFamilyProfile[key];
+                            if(value !== '' && value !== null) {
+                                $(modifyMember).find(`.${key}`).val(value);
+                            }
+                        }
+                    $(modifyMember).find('.modifyCancleBtn').click();
                 })
             } else {
                 $(member).find('.modifyCancleBtn').click();
@@ -454,7 +613,186 @@
             if(confirm('정말로 삭제하시겠습니까?')) {
                 location.href = `/user/deleteFamilyMember?profileCode=${profileCode}`;
             }
+        });
+
+        //그룹 추가 버튼 클릭
+        $('.groupAdd').click(function(){
+            const groupAddCheck = $('.groupAddCheck');
+
+            //가족 그룹 전체 목록으로 바꾸고, 다른 그룹 선택 못하게.
+            $('.group').removeClass('liActive').css('pointer-events','none').first().addClass('liActive');
+            $('.groupContents').hide().first().show();
+
+            //버튼 변경
+            $('.groupModifyDiv').hide();
+            $('.groupAddDiv').show();
+
+            //편집 진행중인 가족 구성원 편집 취소
+            $('.modifyShadow').find('.modifyCancleBtn').click();
+
+            //가족 구성원에 마우스 커서 가져다 댈 시 파란 이벤트
+            $('.member').addClass('groupAddShadow');
+
+
+            //체크박스 생성되게
+            $(groupAddCheck).attr('hidden',false);
+            $(groupAddCheck).attr('disabled',false);
+            $('.groupAddLabel, .card-footer').children().css('pointer-events','none');
+        });
+
+        //그룹 추가시 가족 구성원 체크될 시 이벤트
+        $('.groupAddCheck').change(function(){
+            let isChecked = $(this).prop('checked');
+            if(isChecked) {
+                $(this).parents('.member').addClass('groupAddCheckShadow');
+            } else {
+                $(this).parents('.member').removeClass('groupAddCheckShadow');
+            }
+        });
+
+        //그룹 추가 취소 버튼 클릭
+        $('.groupAddCancel').click(function(){
+            const groupAddCheck = $('.groupAddCheck');
+
+            //버튼 변경
+            $('.groupAddDiv').hide();
+            $('.groupModifyDiv').show();
+
+            //다른 그룹 선택 가능하게
+            $('.group').css('pointer-events','auto');
+
+            //가족 구성원에 마우스 커서 가져다 댈 시 파란 이벤트 삭제
+            $('.member').removeClass('groupAddShadow');
+
+            //체크박스 체크 취소하고 안보이게
+            $(groupAddCheck).attr('hidden',true);
+            $(groupAddCheck).attr('disabled',true);
+            $('.groupAddLabel, .card-footer').children().css('pointer-events','auto');
+            $('.groupAddCheck:checked').prop('checked',false);
+            $(groupAddCheck).parents('.member').removeClass('groupAddCheckShadow')
+        });
+
+        //그룹 추가 확정 버튼 클릭
+        $('.groupAddConfirm').click(function(){
+            let Checked = $('.groupAddCheck:checked');
+
+            if(Checked.length > 0) {
+                let groupName = prompt('그룹 이름을 입력해 주세요.');
+                //그룹 이름 입력x
+                if(!groupName || groupName.replaceAll(' ','').length === 0){
+                    alert('그룹 이름을 입력해 주세요.');
+                    $(this).click();
+                } else {
+                    //그룹 이름 입력o
+                    if(confirm('정말 추가하시겠습니까?')) {
+
+                        //그룹 추가 이벤트
+                        const familyGroup = {
+                            groupName : groupName,
+                            familyProfileList : []
+                        };
+
+
+                        $(Checked).each((idx,item) => {
+                            const groupObj = {};
+                            let profileCode = $(item).parents('.member').find('.profileCode').val();
+                            groupObj['profileCode'] = profileCode
+                            familyGroup.familyProfileList.push(groupObj)
+                        })
+                        console.log(familyGroup)
+
+                        $.ajax({
+                            data : JSON.stringify(familyGroup),
+                            url : '/user/addFamilyGroup',
+                            contentType : 'application/json',
+                            type : 'POST',
+                            dataType: 'text',
+                            traditional : true
+                        }).done(function (result) {
+                            location.href = result;
+                        }).fail (function (err){
+                            console.log(err);
+                        })
+                        //그룹 추가 후 이벤트
+                        $('.groupAddCancel').click();
+                    }
+                }
+            } else {
+                alert('구성원을 선택해 주세요')
+            }
+        });
+
+        //그룹 삭제버튼 클릭
+        $('.groupDelete').click(function(){
+            const deleteCheck = $('.deleteGroupCheck');
+
+            //그룹 목록 체크박스 나오게
+            $(deleteCheck).attr('hidden',false);
+            $(deleteCheck).attr('disabled',false);
+
+            //버튼 변경
+            $('.groupModifyDiv').hide();
+            $('.groupDeleteDiv').show();
+
+            //편집 진행중인 가족 구성원 편집 취소
+            $('.modifyShadow').find('.modifyCancleBtn').click();
+
+
+            //구성원 편집, 취소 버튼 못누르게
+            $('.card-footer').children().css('pointer-events','none');
         })
+
+        //그룹 삭제 취소버튼 클릭
+        $('.groupDeleteCancel').click(function () {
+
+            const deleteCheck = $('.deleteGroupCheck');
+
+            //그룹 목록 체크 취소하고 체크박스 사라지게
+            $('.deleteGroupCheck:checked').prop('checked',false);
+            $(deleteCheck).attr('hidden',true);
+            $(deleteCheck).attr('disabled',true);
+
+            //버튼 변경
+            $('.groupModifyDiv').show();
+            $('.groupDeleteDiv').hide();
+
+            //구성원 편집, 취소 버튼 누를 수 있게
+            $('.card-footer').children().css('pointer-events','auto');
+        });
+
+        //그룹 삭제 확인버튼 클릭
+        $('.groupDeleteConfirm').click(function(){
+            const checked = $('.deleteGroupCheck:checked');
+
+            if(checked.length > 0) {
+                if(confirm('정말 삭제하시겠습니까?')) {
+
+                    const groupCodeList =[];
+
+                    $(checked).each((idx,item) => {
+                        let groupCode = $(item).val();
+                        groupCodeList.push(groupCode);
+                    })
+                    console.log(groupCodeList);
+
+                    $.ajax({
+                        data : {groupCodeList : groupCodeList},
+                        type : 'POST',
+                        dataType: 'text',
+                        url : '/user/deleteFamilyGroup'
+                    }).done(function(result){
+                        location.href = result;
+                    }).fail(function(err){
+                        console.log(err);
+                    })
+
+                }
+            } else {
+                alert('삭제할 그룹을 선택해주세요.');
+            }
+
+
+        });
 
     </script>
 

@@ -16,4 +16,5 @@ public class FamilyProfile {
     private String memberId;
 
     private FamilyTitle familyTitle;
+    private GroupAssociation groupAssociation;
 }

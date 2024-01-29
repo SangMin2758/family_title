@@ -14,7 +14,8 @@
         <result property="regDate" column="reg_date"/>
     </resultMap>
 
-    <resultMap id="familyProfileResultMap" type="FamilyProfile">
+    <resultMap id="familyListResultMap" type="FamilyProfile">
+
         <id property="profileCode" column="profile_code"/>
         <result property="familyCode" column="family_code"/>
         <result property="name" column="name"/>
@@ -32,6 +33,39 @@
             <result property="nextRelation" column="next_relation"/>
             <result property="regDate" column="reg_date"/>
         </association>
+    </resultMap>
+
+    <resultMap id="familyGroupResultMap" type="FamilyGroup">
+        <id property="groupCode" column="group_code"/>
+        <result property="groupName" column="group_name"/>
+        <result property="memberId" column="member_id"/>
+
+        <collection property="familyProfileList" javaType="list" ofType="FamilyProfile">
+
+            <id property="profileCode" column="profile_code"/>
+            <result property="familyCode" column="family_code"/>
+            <result property="name" column="name"/>
+            <result property="birthday" column="birthday"/>
+            <result property="image" column="image"/>
+            <result property="detailInfo" column="detail_info"/>
+            <result property="memberId" column="member_id"/>
+
+            <association property="familyTitle" javaType="FamilyTitle">
+                <id property="familyCode" column="family_code"/>
+                <result property="familyAppellation" column="family_appellation"/>
+                <result property="familyTitle" column="family_title"/>
+                <result property="familyRelation" column="family_relation"/>
+                <result property="familyGender" column="family_gender"/>
+                <result property="nextRelation" column="next_relation"/>
+                <result property="regDate" column="reg_date"/>
+            </association>
+
+            <association property="groupAssociation" javaType="GroupAssociation">
+                <id property="associationCode" column="assoiation_code"/>
+                <result property="profileCode" column="profile_code"/>
+                <result property="groupCode" column="group_code"/>
+            </association>
+        </collection>
     </resultMap>
 
 
@@ -110,24 +144,52 @@
     </update>
 
     <!--추가한 가족 구성원 전체 조회-->
-    <select id="familyMemberList" parameterType="String" resultMap="familyProfileResultMap">
+    <select id="allFamilyList" parameterType="String" resultMap="familyListResultMap">
         SELECT
             f.profile_code,
             f.family_code,
-            f.birthday,
-            f.detail_info,
-            f.image,
             f.name,
-            ft.family_appellation,
-            ft.family_title,
-            ft.family_relation,
-            ft.family_gender
+            f.birthday,
+            f.image,
+            f.detail_info,
+            t.family_code,
+            t.family_appellation,
+            t.family_title,
+            t.family_relation,
+            t.family_gender
         FROM
             family_profile AS f
         INNER JOIN
-            family_title AS ft
+            family_title AS t
         ON
-            f.family_code = ft.family_code
+            f.family_code = t.family_code
+        WHERE
+            f.member_id = #{memberId};
+    </select>
+
+    <!--추가한 가족 구성원 그룹 별 조회-->
+    <select id="familyMemberListByGroup" parameterType="String" resultMap="familyGroupResultMap">
+        SELECT
+            g.group_code,
+            g.group_name,
+            a.association_code,
+            f.profile_code,
+            f.name,
+            f.birthday,
+            f.detail_info,
+            f.image,
+            t.family_gender,
+            t.family_relation,
+            t.family_title,
+            t.family_appellation,
+            t.family_code
+        FROM profile_group AS g
+        INNER JOIN group_association AS a
+        ON g.group_code = a.group_code
+        INNER JOIN family_profile AS f
+        ON a.profile_code = f.profile_code
+        INNER JOIN family_title AS t
+        ON f.family_code =t.family_code
         WHERE
             f.member_id = #{memberId};
     </select>
@@ -147,15 +209,87 @@
     </update>
 
     <!--추가된 가족 구성원 삭제-->
+    <!--1.구성원과 그룹 관계 삭제-->
+    <delete id="deleteProfileAssociation" parameterType="String">
+        DELETE
+            group_association
+        FROM
+            group_association
+        WHERE
+            profile_code = #{profileCode}
+    </delete>
+    <!--2. 가족 구성원 삭제-->
     <delete id="deleteFamilyMember" parameterType="String">
-
             DELETE
                 family_profile
             FROM
                 family_profile
             WHERE
                  profile_code = #{profileCode}
-
     </delete>
 
+    <!--가족 구성원 그릅 추가-->
+    <!--1. 그룹 생성    -->
+    <update id="addFamilyGroup" parameterType="String">
+
+        <selectKey keyProperty="groupCode" resultType="String" order="BEFORE">
+            SELECT
+                (CASE
+                    WHEN
+                        COUNT(g.group_code) = 0  THEN CONCAT('gc_', CURDATE()+0, '_1')
+                    ELSE
+                        CONCAT('gc_', CURDATE()+0 ,'_' ,MAX(CAST(substring_index(g.group_code,'_',-1)AS UNSIGNED )+1))
+                END) AS groupCode
+            FROM
+                profile_group as g
+            WHERE
+                SUBSTRING_INDEX(SUBSTRING_INDEX(g.group_code,'_',2),'_',-1) = CURDATE()+0;
+        </selectKey>
+        INSERT INTO profile_group
+            (group_code, group_name, member_id)
+        VALUES
+            (#{groupCode},#{groupName}, 'id001');
+    </update>
+
+    <!--2. 관계 맺기    -->
+    <update id="groupAssociation" parameterType="String">
+        <selectKey keyProperty="associationCode" resultType="String" order="BEFORE">
+            SELECT
+                (CASE
+                    WHEN
+                        COUNT(a.association_code) = 0  THEN CONCAT('ac_', CURDATE()+0, '_1')
+                    ELSE
+                        CONCAT('ac_', CURDATE()+0 ,'_' ,MAX(CAST(substring_index(a.association_code,'_',-1)AS UNSIGNED )+1))
+                END) AS associationCode
+            FROM
+                group_association as a
+            WHERE
+                SUBSTRING_INDEX(SUBSTRING_INDEX(a.association_code,'_',2),'_',-1) = CURDATE()+0;
+        </selectKey>
+        INSERT INTO group_association
+            (association_code, profile_code, group_code)
+        VALUES
+            (#{associationCode}, #{profileCode}, #{groupCode});
+    </update>
+
+    <!--그룹 목록 삭제-->
+    <!--1. 그릅 관계 삭제-->
+    <delete id="deleteGroupAssociation" parameterType="String">
+        DELETE
+            group_association
+        FROM
+            group_association
+        WHERE
+            group_code = #{groupCode}
+    </delete>
+
+    <!--2. 그룹 삭제-->
+    <delete id="deleteGroup" parameterType="String">
+        DELETE
+            profile_group
+        FROM
+            profile_group
+        WHERE
+            group_code = #{groupCode}
+    </delete>
 </mapper>
