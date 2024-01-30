@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import side.family_title.dto.FamilyGroup;
 import side.family_title.dto.FamilyProfile;
 import side.family_title.dto.FamilyTitle;
@@ -94,6 +95,8 @@ public class UserController {
         List<FamilyProfile> allFamilyList = userService.allFamilyList("id001");
         //그룹 별 가족 구성원 조회
         List<FamilyGroup> familyGroupList = userService.familyMemberListByGroup("id001");
+
+
 
         model.addAttribute("allFamilyList", allFamilyList);
         model.addAttribute("familyGroupList", familyGroupList);
@@ -198,6 +201,18 @@ public class UserController {
         userService.deleteGroup(groupCodeList);
 
         return "/user/familyGroup";
+    }
+
+    //그룹에서 가족 구성원 삭제
+    @GetMapping("/deleteFamilyByGroup")
+    public String deleteFamilyByGroup (@RequestParam(name="profileCode") String profileCode,
+                                       @RequestParam(name="groupCode") String groupCode,
+                                       @RequestParam(name="groupIdx") int groupIdx,
+                                       RedirectAttributes reAttr) {
+        userService.deleteFamilyByGroup(profileCode, groupCode);
+
+        reAttr.addFlashAttribute("groupIdx", groupIdx);
+        return "redirect:/user/familyGroup";
     }
 
 }

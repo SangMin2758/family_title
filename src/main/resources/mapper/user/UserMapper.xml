@@ -292,4 +292,15 @@
         WHERE
             group_code = #{groupCode}
     </delete>
+
+
+    <!--가족 구성원 그룹에서 삭제-->
+    <delete id="deleteFamilyByGroup" parameterType="String">
+        DELETE
+            group_association
+        FROM
+            group_association
+        WHERE
+            profile_code = #{profileCode} AND group_code = #{groupCode}
+    </delete>
 </mapper>

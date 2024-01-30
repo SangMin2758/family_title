@@ -59,8 +59,9 @@
 
         .modifyInputShadow {
             background: white !important;
-            border: #ccc 1px solid !important;
             border-radius: 10px;
+            box-shadow: #43ac6a 0 0 5px 5px !important;
+            border: #43ac6a 1px solid !important;
         }
 
         .groupAdd {
@@ -126,17 +127,41 @@
                         <label style="margin :0; width: 100%; height: 100%;"><input type="checkbox" class="mr-lg-2 deleteGroupCheck" hidden="hidden" disabled="disabled"  th:value="${gl.groupCode}"><span th:text="${gl.groupName}"> </span></label>
                     </li>
                     <li class=" font-weight-bold " style="padding: 0">
-                        <div class="groupModifyDiv row" style="margin:0;  height: 40px;">
-                            <div class="groupAdd col-lg-6 h-100 text-primary" style="margin:0; padding: 0; border : 2px solid #008cba ; border-radius: 0 0 0 20px ; font-size: 20px">+</div>
-                            <div class="groupDelete col-lg-6 h-100 text-danger" style="margin:0; padding: 0; border: 2px solid #f04124; border-left: 1px solid grey;  font-size: 20px">-</div>
+                        <div class="groupModifyDiv row" style="margin:0;  height: 40px;" th:if="${#lists.size(familyGroupList) > 0}">
+                            <div class="groupAdd col-lg-6 h-100 text-primary" style="margin:0; padding: 0; border : 2px solid #008cba ; border-radius: 0 0 0 20px ; font-size: 20px"
+                                 tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                 data-content="추가할 가족을 선택하고 확인 버튼을 눌러주세요" data-title="그룹 생성" data-placement="bottom">+
+                            </div>
+                            <div class="groupDelete col-lg-6 h-100 text-danger" style="margin:0; padding: 0; border: 2px solid #f04124;  font-size: 20px"
+                                 tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                 data-content="삭제할 그룹을 선택하고 확인 버튼을 눌러주세요" data-title="그룹 삭제" data-placement="bottom">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-dash-lg" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 8Z"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="groupModifyDiv row" style="margin:0;  height: 40px;" th:unless="${#lists.size(familyGroupList) > 0}">
+                            <div class="groupAdd col-lg-12 h-100 text-primary" style="margin:0; padding: 0; border : 2px solid #008cba ; border-radius: 0 0 0 20px ; font-size: 20px"
+                                 tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                 data-content="추가할 가족을 선택하고 확인 버튼을 눌러주세요" data-title="그룹 생성" data-placement="bottom">+
+                            </div>
                         </div>
                         <div class="groupAddDiv row" style="margin:0;  height: 40px; display: none">
-                            <div class="groupAddConfirm col-lg-6 h-100 text-white bg-primary" style="margin:0; padding: 0; border-radius: 0 0 0 20px ; font-size: 20px">추가</div>
-                            <div class="groupAddCancel col-lg-6 h-100 text-white bg-danger" style="margin:0; padding: 0; border-left: 1px solid grey;  font-size: 20px">취소</div>
+                            <button class="groupAddConfirm col-lg-6 h-100 text-white" style="margin:0; padding: 0; border-radius: 0 0 0 20px ; background-color: #888888;  font-size: 20px; pointer-events: none"
+                                 tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                 data-content="선택한 가족으로 새 그룹을 생성합니다." data-title="그룹 생성" data-placement="bottom">확인</button>
+                            <button class="groupAddCancel col-lg-6 h-100 text-white bg-danger" style="margin:0; padding: 0;  font-size: 20px"
+                                 tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                 data-content="그룹 생성을 취소합니다." data-title="그룹 생성 취소" data-placement="bottom">취소</button>
                         </div>
                         <div class="groupDeleteDiv row" style="margin:0;  height: 40px; display: none">
-                            <div class="groupDeleteConfirm col-lg-6 h-100 text-white bg-primary" style="margin:0; padding: 0; border-radius: 0 0 0 20px ; font-size: 20px">삭제</div>
-                            <div class="groupDeleteCancel col-lg-6 h-100 text-white bg-danger" style="margin:0; padding: 0; border-left: 1px solid grey;  font-size: 20px">취소</div>
+                            <button class="groupDeleteConfirm col-lg-6 h-100 text-white" style="margin:0; padding: 0; border-radius: 0 0 0 20px ; font-size: 20px; pointer-events: none ;background-color: #888888;"
+                                 tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                 data-content="선택한 그룹을 삭제합니다." data-title="그룹 삭제" data-placement="bottom">확인</button>
+                            <button class="groupDeleteCancel col-lg-6 h-100 text-white bg-danger" style="margin:0; padding: 0;  font-size: 20px;"
+                                 tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
+                                 data-content="그룹 삭제를 취소합니다." data-title="그룹 삭제 취소" data-placement="bottom">취소</button>
                         </div>
                     </li>
                 </ul>
@@ -221,7 +246,7 @@
                                             </svg>
                                         </button>
                                         <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
-                                                data-content="상세정보" data-placement="bottom" type="button"
+                                                data-content="일정 관리" data-placement="bottom" type="button"
                                                 class="btn btn-primary">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white"
                                                  class="bi bi-caret-down-fill" viewBox="0 0 16 16">
@@ -229,7 +254,7 @@
                                             </svg>
                                         </button>
                                         <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
-                                                data-content="삭제" data-placement="bottom" type="button"
+                                                data-content="이 구성원을 삭제합니다." data-title="구성원 삭제" data-placement="bottom" type="button"
                                                 class="delBtn btn btn-danger" style="border-radius: 0 0 10px 0;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
@@ -261,7 +286,7 @@
                 </div>
 
                 <div class="groupContents bg-secondary w-100 h-100"
-                     style="border-radius: 0 0 20px 20px; box-shadsw:  0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.15); display: none" th:each="gl : ${familyGroupList}">
+                     style="border-radius: 0 0 20px 20px; box-shadsw:  0.5rem 0.5rem 0.5rem  rgba(0, 0, 0, 0.15); display: none" th:each="gl : ${familyGroupList}" th:data-groupCode="${gl.groupCode}">
                     <br>
                     <div class="bg-white w-50 mx-auto shadow mb-lg-5" style="margin : 0; border-radius: 15px">
                             <h3 class="text-center" th:text="${gl.groupName}"></h3>
@@ -341,8 +366,8 @@
                                             </svg>
                                         </button>
                                         <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
-                                                data-content="삭제" data-placement="bottom" type="button"
-                                                class="delBtn btn btn-danger" style="border-radius: 0 0 10px 0;">
+                                                data-content="이 구성원을 현재 그룹에서 삭제합니다. (소속된 그룹에서만 삭제될 뿐 완전히 삭제되는 것은 아닙니다.)" data-title="그룹에서 삭제" data-placement="bottom" type="button"
+                                                class="delByGroupBtn btn btn-danger" style="border-radius: 0 0 10px 0;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                                 <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
@@ -397,7 +422,7 @@
 
 <!-- 사용자별 스크립트 작성 -->
 <th:block layout:fragment="customJsCode">
-    <script>
+    <script th:inline="javascript">
 
         //팝오버
         $(document).ready(function () {
@@ -425,53 +450,8 @@
             showAnim: "slide"
         })
 
-        //유효성 검사 validationCheck 함수
-        function validationCheck(target) {
-            let isValid = true;
 
-
-                if (target === null || target === '' || target === 'undefined') {
-                    isValid = false;
-                }
-
-            return isValid;
-        }
-
-        //그룹 클릭 시 이벤트
-        $('.group').click(function () {
-            $('.group').removeClass('liActive');
-            $(this).addClass('liActive');
-            let idx = $(this).index();
-
-            $('.groupContents').hide();
-            $(`.groupDiv .groupContents:nth-child(${idx + 1})`).show();
-        })
-
-        //수정 클릭 시 이벤트
-        $('.modifyBtn').click(function () {
-            const member = $(this).parents('.member');
-
-            //다른 수정 폼 창 닫기
-            $('div.modifyShadow').find('.modifyCancleBtn').click();
-
-            //초록색 이펙트 추가
-            $(member).addClass('modifyShadow');
-
-            //버튼 변환
-            $(member).find('.btnGroup').hide();
-            $(member).find('.modifyGroup').show();
-
-            //수정 입력 폼 나타나게
-            $(member).find('.modifyName').attr('disabled', false).addClass('modifyInputShadow').addClass('modifyShadow');
-            $(member).find('.modifyBirth').attr('disabled', false).addClass('modifyInputShadow').addClass('modifyShadow');
-            $(member).find('.modifyDetailInfo').attr('disabled', false).addClass('modifyShadow');
-
-            //이미지 추가 가능하도록
-            $(member).find('.imageAddBtn').attr('disabled', false)
-            $(member).find('.memberImage').addClass('modifyImage').addClass('modifyShadow');
-        });
-
-        //썸네일 이미지 추가 시, 이미지 표시
+        //프로필 이미지 추가 시, 추가된 이미지 표사해주는 함수.
         function setImageFromFile(input, expression) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -482,6 +462,100 @@
             }
         }
 
+        //생년 월일로 나이 계산하는 함수
+        function calculateAge (birthDate){
+
+            birthDate = new Date(birthDate);
+
+            let bithYear = birthDate.getFullYear();
+            let birthMonth = birthDate.getMonth();
+            let birthDay = birthDate.getDate();
+
+            let currentDate = new Date();
+            let currentYear = currentDate.getFullYear();
+            let currentMonth = currentDate.getMonth();
+            let currentDay = currentDate.getDate();
+
+            //만 나이 계산
+            let age = currentYear - bithYear;
+
+            // 1살 이상일 경우 oo 살
+            if( age > 0) {
+                if(currentMonth < birthMonth) {
+                    age --;
+                } else if (currentMonth === birthMonth && currentDay < birthDay) {
+                    age --;
+                }
+                // 1살 이하일 경우 0살(oo개월)
+            } else {
+                age = currentMonth - birthMonth;
+                if(age > 0) {
+
+                    return `0살(${age}개월)`;
+                }
+                //1달 이하일 경우 0살(oo일)
+                else  {
+                    age = currentDay - birthDay;
+                    return `0살(${age}일)`;
+                }
+            }
+            return `${age} 살`;
+        }
+
+        //페이지 로드 했을 시 이벤트
+        $(document).ready(function () {
+
+            //생년월일로 된 나이 만 나이로 변경하기
+            const birthday = $('.modifyBirth');
+            $(birthday).each((idx,item)=>{
+                let age = $(item).val();
+                if(age !== '') {
+                    $(item).val(calculateAge(age));
+                }
+            })
+
+            //그룹에서 회원 삭제하고 새로고침 될 시, 회원 삭제한 그룹 선택되게
+            let groupIdx = [[${groupIdx}]];
+            $(`.group:nth-child(${groupIdx + 1})`).click();
+        })
+
+
+        //그룹 클릭 시 선택한 그룹 보여주는 이벤트
+        $('.group').click(function () {
+
+            $('.group').removeClass('liActive');
+            $(this).addClass('liActive');
+            let idx = $(this).index();
+
+            $('.groupContents').hide();
+            $(`.groupDiv .groupContents:nth-child(${idx + 1})`).show();
+        });
+
+        //가족 구성원 편집 클릭 시 이벤트
+        $('.modifyBtn').click(function () {
+            const member = $(this).parents('.member');
+
+            //다른 가족 구성원 수정 폼 닫기.
+            $('div.modifyShadow').find('.modifyCancleBtn').click();
+
+            //초록색 이펙트 추가
+            $(member).addClass('modifyShadow');
+
+            //버튼 변환
+            $(member).find('.btnGroup').hide();
+            $(member).find('.modifyGroup').show();
+
+            //수정 입력 폼 나타나게
+            $(member).find('.modifyName').attr('disabled', false).addClass('modifyInputShadow');
+            $(member).find('.modifyBirth').attr('disabled', false).addClass('modifyInputShadow');
+            $(member).find('.modifyDetailInfo').attr('disabled', false).addClass('modifyShadow');
+
+            //이미지 추가 가능하도록
+            $(member).find('.imageAddBtn').attr('disabled', false)
+            $(member).find('.memberImage').addClass('modifyImage').addClass('modifyShadow');
+        });
+
+        // 이미지 추가 시, 추가된 이미지 표시
         $('.imageAddBtn').change(function () {
             if ($(this).val() != null) {
                 setImageFromFile(this, $(this).prev());
@@ -499,16 +573,15 @@
             let birthday = $(member).find('.birthday').val();
             let detailInfo = $(member).find('.detailInfo').val();
 
-            //기존 정보로 변경
+            //편집 전의 기존 회원 정보로 변경
             if(image === '') {
                 $(member).find('.memberImage').attr('src','/images/no-image.svg');
             } else{
                 $(member).find('.memberImage').attr('src',`/familyImage/${image}`);
             }
             $(member).find('.modifyName').val(name);
-            $(member).find('.modifyBirth').val(birthday);
+            $(member).find('.modifyBirth').val(calculateAge(birthday));
             $(member).find('.modifyDetailInfo').val(detailInfo);
-
 
             //초록색 이펙트 삭제
             $(member).removeClass('modifyShadow');
@@ -518,20 +591,20 @@
             $(member).find('.btnGroup').show()
 
             //수정 입력 폼 사라지게
-            $(member).find('.modifyName').attr('disabled', true).removeClass('modifyInputShadow').removeClass('modifyShadow');
-            $(member).find('.modifyBirth').attr('disabled', true).removeClass('modifyInputShadow').removeClass('modifyShadow');
+            $(member).find('.modifyName').attr('disabled', true).removeClass('modifyInputShadow');
+            $(member).find('.modifyBirth').attr('disabled', true).removeClass('modifyInputShadow');
             $(member).find('.modifyDetailInfo').attr('disabled', true).removeClass('modifyShadow');
 
-            //이미지 추가 불가능하게
+            //프로필 이미지 등록 불가능하게
             $(member).find('.imageAddBtn').attr('disabled', true);
             $(member).find('.memberImage').removeClass('modifyImage').removeClass('modifyShadow');
         });
 
-
-        //편집 완료버튼 누를 시
+        //편집 완료버튼 누를 시 편집 진행
         $('.modifyConfirmBtn').click(function () {
 
             const member = $(this).parents('.member');
+
             let profileCode = $(member).find('.profileCode').val();
             let originInfo = $(member).find('.name, .birthday, .detailInfo');
             let modifyInfo = $(member).find('.modifyName, .modifyBirth, .modifyDetailInfo');
@@ -559,7 +632,7 @@
                 }
             })
 
-            //업로드할 사진 파일을 담는 폼데이터
+            //업로드할 사진 파일을 담는 폼데이터 생성
             let file = $(member).find('.imageAddBtn')[0].files[0];
             let formData = new FormData();
             formData.append('file',file);
@@ -591,7 +664,8 @@
                     contentType : 'application/json'
                 }).done(function (modifyFamilyProfile) {
 
-                    const modifyMember = $(`.profileCode[value='${profileCode}']`).parents('.member')
+                    //변경된 정보 화면에 표시하기
+                    const modifyMember = $(`.profileCode[value='${profileCode}']`).parents('.member');
 
                         for(let key in modifyFamilyProfile) {
                             let value = modifyFamilyProfile[key];
@@ -599,18 +673,19 @@
                                 $(modifyMember).find(`.${key}`).val(value);
                             }
                         }
+                        //정보 변경후, 편집 취소버튼 클릭.
                     $(modifyMember).find('.modifyCancleBtn').click();
                 })
             } else {
-                $(member).find('.modifyCancleBtn').click();
+                alert('변경된 정보가 없습니다. 변경을 취소하려면 취소하기 버튼을 클릭해 주세요.');
             }
-        })
+        });
 
-        //추가된 가족 삭제버튼 클릭
+        //가족 구성원 삭제하기 버튼 클릭
         $('.delBtn').click(function(){
             let profileCode = $(this).parents('.member').find('.profileCode').val();
 
-            if(confirm('정말로 삭제하시겠습니까?')) {
+            if(confirm('이 가족 구성원을 삭제하시겠습니까?')) {
                 location.href = `/user/deleteFamilyMember?profileCode=${profileCode}`;
             }
         });
@@ -619,66 +694,81 @@
         $('.groupAdd').click(function(){
             const groupAddCheck = $('.groupAddCheck');
 
-            //가족 그룹 전체 목록으로 바꾸고, 다른 그룹 선택 못하게.
+            //가족 그룹을 전체 목록으로 바꾸고, 다른 그룹 선택 못하게.
             $('.group').removeClass('liActive').css('pointer-events','none').first().addClass('liActive');
             $('.groupContents').hide().first().show();
 
-            //버튼 변경
+            //그룹 추가, 삭제 버튼에서 확인, 취소 버튼으로 변경.
             $('.groupModifyDiv').hide();
             $('.groupAddDiv').show();
 
             //편집 진행중인 가족 구성원 편집 취소
             $('.modifyShadow').find('.modifyCancleBtn').click();
 
-            //가족 구성원에 마우스 커서 가져다 댈 시 파란 이벤트
+            //가족 구성원에 마우스 커서 가져다 댈 시 파란이벤트
             $('.member').addClass('groupAddShadow');
-
 
             //체크박스 생성되게
             $(groupAddCheck).attr('hidden',false);
             $(groupAddCheck).attr('disabled',false);
+
+            //구성원 선택 할 때 구성원 카드 선택하면 클릭되도록 카드 안 다른 요소 클릭 이벤트 삭제, 편집, 삭제, 일정 버튼 클릭 이벤트 삭제
             $('.groupAddLabel, .card-footer').children().css('pointer-events','none');
         });
 
-        //그룹 추가시 가족 구성원 체크될 시 이벤트
+        //그룹 추가할 때 가족 구성원 체크할 시 파란 이벤트
         $('.groupAddCheck').change(function(){
             let isChecked = $(this).prop('checked');
+
+            //체크되면 파란색 이벤트
             if(isChecked) {
                 $(this).parents('.member').addClass('groupAddCheckShadow');
             } else {
                 $(this).parents('.member').removeClass('groupAddCheckShadow');
             }
+
+            //체크가 한개라도 돼야 그룹 추가 확인버튼 클릭할 수 있게 + 색상 변경
+            if($('.groupAddCheck:checked').length > 0) {
+                $('.groupAddConfirm').css('pointer-events','auto').css('background-color','#008cba');
+            } else {
+                $('.groupAddConfirm').css('pointer-events','none').css('background-color','#888888');
+            }
+
+
         });
 
         //그룹 추가 취소 버튼 클릭
         $('.groupAddCancel').click(function(){
             const groupAddCheck = $('.groupAddCheck');
 
-            //버튼 변경
+            // 확인, 취소 버튼에서 그룹 추가, 삭제 버튼으로 변경.
             $('.groupAddDiv').hide();
             $('.groupModifyDiv').show();
 
             //다른 그룹 선택 가능하게
             $('.group').css('pointer-events','auto');
 
-            //가족 구성원에 마우스 커서 가져다 댈 시 파란 이벤트 삭제
+            //가족 구성원에 마우스 커서 가져다 댈 시 나타다는 파란 이벤트 삭제
             $('.member').removeClass('groupAddShadow');
 
-            //체크박스 체크 취소하고 안보이게
+            //그룹 추가할 회원 선택 취소하고 체크박스, 파란 이펙트 안보이게
             $(groupAddCheck).attr('hidden',true);
             $(groupAddCheck).attr('disabled',true);
             $('.groupAddLabel, .card-footer').children().css('pointer-events','auto');
             $('.groupAddCheck:checked').prop('checked',false);
-            $(groupAddCheck).parents('.member').removeClass('groupAddCheckShadow')
+            $(groupAddCheck).parents('.member').removeClass('groupAddCheckShadow');
+
+            //그룹 추가 확인 버튼 회색으로 변경하고, 클릭 못하게
+            $('.groupAddConfirm').css('pointer-events','none').css('background-color','#888888');
         });
 
-        //그룹 추가 확정 버튼 클릭
+        //그룹 추가 확인 버튼 클릭
         $('.groupAddConfirm').click(function(){
             let Checked = $('.groupAddCheck:checked');
 
             if(Checked.length > 0) {
                 let groupName = prompt('그룹 이름을 입력해 주세요.');
-                //그룹 이름 입력x
+                //그룹 이름 입력x, 공백으로 입력 했을 때
                 if(!groupName || groupName.replaceAll(' ','').length === 0){
                     alert('그룹 이름을 입력해 주세요.');
                     $(this).click();
@@ -686,20 +776,19 @@
                     //그룹 이름 입력o
                     if(confirm('정말 추가하시겠습니까?')) {
 
-                        //그룹 추가 이벤트
+                        //그룹 추가 이벤트 진행
                         const familyGroup = {
                             groupName : groupName,
                             familyProfileList : []
                         };
 
-
                         $(Checked).each((idx,item) => {
                             const groupObj = {};
                             let profileCode = $(item).parents('.member').find('.profileCode').val();
-                            groupObj['profileCode'] = profileCode
-                            familyGroup.familyProfileList.push(groupObj)
+                            groupObj['profileCode'] = profileCode;
+                            familyGroup.familyProfileList.push(groupObj);
                         })
-                        console.log(familyGroup)
+                        console.log(familyGroup);
 
                         $.ajax({
                             data : JSON.stringify(familyGroup),
@@ -713,7 +802,7 @@
                         }).fail (function (err){
                             console.log(err);
                         })
-                        //그룹 추가 후 이벤트
+                        //그룹 추가 완료 후, 그룹 추가하기 위해 변경했던 화면 되돌리기.
                         $('.groupAddCancel').click();
                     }
                 }
@@ -737,17 +826,16 @@
             //편집 진행중인 가족 구성원 편집 취소
             $('.modifyShadow').find('.modifyCancleBtn').click();
 
-
             //구성원 편집, 취소 버튼 못누르게
             $('.card-footer').children().css('pointer-events','none');
-        })
+        });
 
         //그룹 삭제 취소버튼 클릭
         $('.groupDeleteCancel').click(function () {
 
             const deleteCheck = $('.deleteGroupCheck');
 
-            //그룹 목록 체크 취소하고 체크박스 사라지게
+            //삭제할 그룹 목록 선택 취소하고 체크박스 사라지게
             $('.deleteGroupCheck:checked').prop('checked',false);
             $(deleteCheck).attr('hidden',true);
             $(deleteCheck).attr('disabled',true);
@@ -758,6 +846,21 @@
 
             //구성원 편집, 취소 버튼 누를 수 있게
             $('.card-footer').children().css('pointer-events','auto');
+
+            //그룹 삭제 확인 버튼 클릭하지 못하게
+            $('.groupDeleteConfirm').css('pointer-events','none').css('background-color','#888888');
+        });
+
+        //삭제할 그룹 선택 시, 하나라도 선택해야 삭제 할 수 있도록.
+        $('.deleteGroupCheck').change(function () {
+            let checkedLength = $('.deleteGroupCheck:checked').length;
+
+            if(checkedLength > 0) {
+                $('.groupDeleteConfirm').css('pointer-events','auto').css('background-color','#008cba');
+            } else {
+                $('.groupDeleteConfirm').css('pointer-events','none').css('background-color','#888888');
+            }
+
         });
 
         //그룹 삭제 확인버튼 클릭
@@ -790,9 +893,20 @@
             } else {
                 alert('삭제할 그룹을 선택해주세요.');
             }
-
-
         });
+
+        //그룹에서 가족 구성원 삭제 버튼 클릭, 새로고침 후 이벤트 진행한 그룹 선택되도록
+        $('.delByGroupBtn').click(function(){
+            let profileCode = $(this).parents('.member').find('.profileCode').val();
+            let groupCode = $(this).parents('.groupContents').attr('data-groupCode');
+            let groupIdx = $(this).parents('.groupContents').index();
+            console.log(groupIdx);
+            console.log(groupCode)
+
+            if(confirm('이 가족을 그룹에서 삭제하시겠습니까?')) {
+                location.href = `/user/deleteFamilyByGroup?profileCode=${profileCode}&groupCode=${groupCode}&groupIdx=${groupIdx}`;
+            }
+        })
 
     </script>
 

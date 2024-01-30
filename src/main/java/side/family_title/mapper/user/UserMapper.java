@@ -46,9 +46,12 @@ public interface UserMapper {
 
     //구성원 그릅과 그룹 관계 삭제
     public void deleteGroupAssociation (String groupCode);
-    //구성원 그룹 삭제
+
+    //그룹 삭제
     public void deleteGroup (String groupCode);
 
+    //가족 구성원 그룹에서 삭제
+    public void deleteFamilyByGroup (String profileCode, String groupCode);
 
 
 }

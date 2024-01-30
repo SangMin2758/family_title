@@ -81,7 +81,11 @@ public class UserService {
             userMapper.deleteGroupAssociation(groupCode);
             userMapper.deleteGroup(groupCode);
         }
+    }
 
+    //가족 구성원 그룹에서 삭제
+    public void deleteFamilyByGroup (String profileCode, String groupCode){
+        userMapper.deleteFamilyByGroup(profileCode, groupCode);
     }
 }
 
