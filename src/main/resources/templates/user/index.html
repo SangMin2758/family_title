@@ -406,8 +406,7 @@
 <!-- 사용자별 스크립트 작성 -->
 <th:block layout:fragment="customJsCode">
 
-    <script>
-
+    <script th:inline="javascript">
 
         //가족 구성원 모으는 함수
         function gather(obj) {
@@ -733,38 +732,30 @@
             }
         })
 
-        //구성원 추가 버튼 클릭 시 모달 오픈
+        //구성원 추가
         $('.addFamilyBtn').click(function () {
             let familyCode = $('#targetFamilyCode').val();
-            console.log(familyCode);
+            let loginId = [[${session.SID}]];
 
-            if(confirm('정말 추가하시겠습니까?')) {
-                $.ajax({
-                    url:'/user/addFamilyMember',
-                    type:'GET',
-                    data: {familyCode : familyCode}
-                }).fail(function(err){
-                    console.log(err);
-                })
+            if(loginId === null) {
+                alert('로그인 해주세요.');
+            } else {
+                if(confirm('정말 추가하시겠습니까?')) {
+                    $.ajax({
+                        url:'/user/addFamilyMember',
+                        type:'GET',
+                        data: {
+                            familyCode : familyCode,
+                            loginId : loginId
+                        }
+                    }).fail(function(err){
+                        console.log(err);
+                    })
+                }
             }
+
         })
 
-
-        //썸네일 이미지 추가 시, 이미지 표시
-        function setImageFromFile(input, expression) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    $(expression).attr('src', e.target.result);
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-        $('#imageAddBtn').change(function () {
-            if ($(this).val() != null) {
-                setImageFromFile(this, '.memberImage');
-            }
-        });
 
 
 

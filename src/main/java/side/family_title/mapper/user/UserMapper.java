@@ -53,5 +53,11 @@ public interface UserMapper {
     //가족 구성원 그룹에서 삭제
     public void deleteFamilyByGroup (String profileCode, String groupCode);
 
+    //회원가입 된 아이디인지 조회
+    public int isAccount (String loginId);
+
+    //회원가입 진행
+    public void goAccount (String loginId);
+
 
 }

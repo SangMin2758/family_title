@@ -80,84 +80,14 @@
                         <span th:text="${l.shortRelation}"></span>
                       </td>
                         <td class="text-center">
-                            <button class="addBtn btn btn-sm btn-success font-weight-bold">추가</button>
+                            <button class="familyAddBtn btn btn-sm btn-success font-weight-bold">추가</button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-
         </div>
 
-        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="modalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-secondary">
-                        <h5 class="modal-title">가족 호칭 추가</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body row">
-
-                        <div class="col-lg-6 border-right">
-                            <div id="family">
-                                <input id="male" class="gender ml-lg-2" type="radio" name="gender" value="1"
-                                       checked="checked">
-                                <label for="male">남</label>
-                                <input id="female" class="gender" type="radio" name="gender" value="2">
-                                <label for="female">여</label>
-                                <br>
-                                <span class="member">나의
-                                        <span>
-                                            <select class="familySelect" style="width: 120px;">
-                                                <option value="아버지" data-gender="1">아버지</option>
-                                                <option value="어머니" data-gender="2">어머니</option>
-                                                <option value="아내" data-gender="2">아내</option>
-                                                <option value="형" data-gender="1">형</option>
-                                                <option value="누나" data-gender="2">누나</option>
-                                                <option value="남동생" data-gender="1">남동생</option>
-                                                <option value="여동생" data-gender="2">여동생</option>
-                                                <option value="아들" data-gender="1">아들</option>
-                                                <option value="딸" data-gender="2">딸</option>
-                                            </select>
-                                        </span>
-                                    </span>
-                                <svg type="button" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                     fill="currentColor" class="addBtn bi bi-plus-square" viewBox="0 0 16 16">
-                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6">
-                            <div class="row">
-                                <div class="col-lg-4 mt-lg-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="grey"
-                                         class="bi bi-person-square" viewBox="0 0 16 16">
-                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12z"/>
-                                    </svg>
-                                </div>
-                                <div class=" col-lg-8">
-                                    <label for="appellation">호칭 </label>
-                                    <input type="text" id="appellation" style="width: 100px">
-                                    <br>
-                                    <label for="title">명칭 </label>
-                                    <input type="text" id="title" style="width: 100px">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="memberAddBtn btn btn-primary">추가</button>
-                        <button type="button" class="closeBtn btn btn-danger" data-dismiss="modal">취소</button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
 
         <div class="col-lg-3 "></div>
@@ -167,7 +97,7 @@
 
 <!-- 사용자별 스크립트 작성 -->
 <th:block layout:fragment="customJsCode">
-    <script>
+    <script th:inline="javascript">
 
         //팝오버
         $(document).ready(function () {
@@ -212,6 +142,32 @@
                 })
             }
         }
+
+        $('.familyAddBtn').click(function () {
+            let familyCode = $(this).parents('tr').find('.familyCode').text();
+            let appellation =  $(this).parents('tr').find('.appellation').text();
+
+            let loginId = [[${session.SID}]];
+
+            if(loginId === null) {
+                alert('로그인 해주세요.');
+            } else {
+                if(confirm('정말 추가하시겠습니까?')) {
+                    $.ajax({
+                        url:'/user/addFamilyMember',
+                        type:'GET',
+                        data: {
+                            familyCode : familyCode,
+                            loginId : loginId
+                        }
+                    }).done(function(){
+                        alert(`${appellation}를(을) 내 가족으로 추가했습니다!`);
+                    }).fail(function(err){
+                        console.log(err);
+                    })
+                }
+            }
+        })
 
 
     </script>

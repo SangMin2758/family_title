@@ -230,7 +230,7 @@
 
     <!--가족 구성원 그릅 추가-->
     <!--1. 그룹 생성    -->
-    <update id="addFamilyGroup" parameterType="String">
+    <update id="addFamilyGroup" parameterType="FamilyGroup">
 
         <selectKey keyProperty="groupCode" resultType="String" order="BEFORE">
             SELECT
@@ -248,10 +248,10 @@
         INSERT INTO profile_group
             (group_code, group_name, member_id)
         VALUES
-            (#{groupCode},#{groupName}, 'id001');
+            (#{groupCode},#{groupName}, #{memberId});
     </update>
 
-    <!--2. 관계 맺기    -->
+    <!--2. 관계 맺기 -->
     <update id="groupAssociation" parameterType="String">
         <selectKey keyProperty="associationCode" resultType="String" order="BEFORE">
             SELECT
@@ -303,4 +303,23 @@
         WHERE
             profile_code = #{profileCode} AND group_code = #{groupCode}
     </delete>
+
+    <!--회원가입 된 회원인지 조회-->
+    <select id="isAccount" parameterType="String">
+        SELECT
+            COUNT(m.member_id)
+        FROM
+            member AS m
+        WHERE
+            m.member_id = #{loginId}
+    </select>
+
+    <!--회원가입 진행-->
+    <update id="goAccount" parameterType="String">
+        INSERT INTO member
+            (member_id, reg_date)
+        VALUES
+            (#{loginId}, now())
+
+    </update>
 </mapper>

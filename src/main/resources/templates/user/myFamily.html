@@ -534,6 +534,7 @@
         //가족 구성원 편집 클릭 시 이벤트
         $('.modifyBtn').click(function () {
             const member = $(this).parents('.member');
+            let birthDay = $('.birthday').val();
 
             //다른 가족 구성원 수정 폼 닫기.
             $('div.modifyShadow').find('.modifyCancleBtn').click();
@@ -545,9 +546,9 @@
             $(member).find('.btnGroup').hide();
             $(member).find('.modifyGroup').show();
 
-            //수정 입력 폼 나타나게
+            //수정 입력 폼 나타나게, 나이 생년월일로 변환
             $(member).find('.modifyName').attr('disabled', false).addClass('modifyInputShadow');
-            $(member).find('.modifyBirth').attr('disabled', false).addClass('modifyInputShadow');
+            $(member).find('.modifyBirth').attr('disabled', false).addClass('modifyInputShadow').val(birthDay);
             $(member).find('.modifyDetailInfo').attr('disabled', false).addClass('modifyShadow');
 
             //이미지 추가 가능하도록

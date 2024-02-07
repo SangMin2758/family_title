@@ -1,6 +1,7 @@
 package side.family_title.service.user;
 
 
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +66,6 @@ public class UserService {
 
         String groupCode = familyGroup.getGroupCode();
 
-
         List<FamilyProfile> familyProfileList = familyGroup.getFamilyProfileList();
 
         for(FamilyProfile familyProfile : familyProfileList) {
@@ -86,6 +86,17 @@ public class UserService {
     //가족 구성원 그룹에서 삭제
     public void deleteFamilyByGroup (String profileCode, String groupCode){
         userMapper.deleteFamilyByGroup(profileCode, groupCode);
+    }
+
+    //회원가입 진행
+    public void goAccount (String loginId) {
+        //회원가입 된 회원인지 조회
+        int isAcoount = userMapper.isAccount(loginId);
+        //가입 됐으면 안된 회원이면 회원가입 진행.
+        if(isAcoount == 0) {
+            userMapper.goAccount(loginId);
+        }
+
     }
 }
 

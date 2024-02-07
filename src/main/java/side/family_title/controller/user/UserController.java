@@ -3,6 +3,7 @@ package side.family_title.controller.user;
 
 import com.google.gson.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -80,30 +81,30 @@ public class UserController {
     //가족 구성원 추가
     @GetMapping("/addFamilyMember")
     @ResponseBody
-    public void addFamilyMember (@RequestParam(name="familyCode") String familyCode) {
+    public void addFamilyMember (@RequestParam(name="familyCode") String familyCode,
+                                 @RequestParam(name="loginId") String loginId) {
 
-        userService.addFamilyMember(familyCode, "id001");
+        userService.addFamilyMember(familyCode, loginId);
 
     }
 
 
     //구성원 관리 페이지
-    @GetMapping("/familyGroup")
-    public String familyGroupPage (Model model) {
+    @GetMapping("/myFamily")
+    public String familyGroupPage (Model model, HttpSession httpSession) {
 
+        String loginId = (String) httpSession.getAttribute("SID");
         //전체 가족 구성원 조회
-        List<FamilyProfile> allFamilyList = userService.allFamilyList("id001");
+        List<FamilyProfile> allFamilyList = userService.allFamilyList(loginId);
         //그룹 별 가족 구성원 조회
-        List<FamilyGroup> familyGroupList = userService.familyMemberListByGroup("id001");
-
-
+        List<FamilyGroup> familyGroupList = userService.familyMemberListByGroup(loginId);
 
         model.addAttribute("allFamilyList", allFamilyList);
         model.addAttribute("familyGroupList", familyGroupList);
 
-        log.info("추가된 가족 구성원 : {}", familyGroupList);
+        log.info("나의 가족 구성원 : {}", familyGroupList);
 
-        return"user/familyGroup";
+        return"user/myFamily";
     }
 
 
@@ -177,18 +178,21 @@ public class UserController {
         System.out.println(profileCode + "<--------profileCode");
         userService.deleteFamilyMember(profileCode);
 
-        return "redirect:/user/familyGroup";
+        return "redirect:/user/myFamily";
     }
 
     //가족 구성원 그룹 추가
     @PostMapping(value="/addFamilyGroup")
     @ResponseBody
-    public String addFamilyGroup (@RequestBody FamilyGroup familyGroup) {
+    public String addFamilyGroup (@RequestBody FamilyGroup familyGroup, HttpSession httpSession) {
+
+        String loginId = (String) httpSession.getAttribute("SID");
+        familyGroup.setMemberId(loginId);
 
         log.info("그룹 추가 회원 목록 : {}", familyGroup);
         userService.addFamilyGroup(familyGroup);
 
-        return "/user/familyGroup";
+        return "/user/myFamily";
     }
 
     // 그룹 삭제
@@ -200,7 +204,7 @@ public class UserController {
 
         userService.deleteGroup(groupCodeList);
 
-        return "/user/familyGroup";
+        return "/user/myFamily";
     }
 
     //그룹에서 가족 구성원 삭제
@@ -212,7 +216,7 @@ public class UserController {
         userService.deleteFamilyByGroup(profileCode, groupCode);
 
         reAttr.addFlashAttribute("groupIdx", groupIdx);
-        return "redirect:/user/familyGroup";
+        return "redirect:/user/myFamily";
     }
 
 }
