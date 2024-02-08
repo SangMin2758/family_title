@@ -208,6 +208,16 @@
             profile_code = #{profileCode}
     </update>
 
+    <!--구성원 정보 편집 시, 기존 이미지 있는지 조회. 있으면 기존파일 삭제하고 새로운 파일 추가하기 위함.-->
+    <select id="originFileRoot" parameterType="String" resultType="String">
+        SELECT
+            f.image
+        FROM
+            family_profile AS f
+        WHERE
+            f.profile_code = #{profileCode};
+    </select>
+
     <!--추가된 가족 구성원 삭제-->
     <!--1.구성원과 그룹 관계 삭제-->
     <delete id="deleteProfileAssociation" parameterType="String">

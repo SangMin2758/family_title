@@ -23,12 +23,14 @@ import side.family_title.service.user.UserService;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 
 @Controller
 @RequestMapping("/user")
@@ -116,6 +118,8 @@ public class UserController {
 
         Map<String,String> result = new HashMap<>();
 
+        //기존에 저장된 파일 있는지 조회. 있다면 삭제 진행 후 새 사진 업로드, 아니면 그냥 바로 업로드
+
         String fileRoot = getOsFileRootPath();
         //OS 별 저장될 외부 파일 경로 지정
         String orginalName = multipartFile.getOriginalFilename();
@@ -133,16 +137,41 @@ public class UserController {
         try {
             multipartFile.transferTo(savePath);
             result.put("saveName",saveName);
-            result.put("responseCode", "success");
 
         } catch (IOException e) {
-            result.put("responseCode", "error");
             e.printStackTrace();
         }
 
         System.out.println(result);
 
         return result;
+    }
+
+
+    //기존에 파일 있는지 조회, 있다면 기존 파일 삭제.
+    @PostMapping(value="/originFileRoot")
+    @ResponseBody
+    public String originFileRoot(@RequestBody String profileCode) {
+
+        String originFileName = userService.originFileRoot(profileCode);
+
+        if(originFileName != null) {
+            deleteFile(originFileName);
+        }
+        return originFileName;
+    }
+
+    // 기존 파일 삭제
+    private void deleteFile(String originFileName) {
+        // 폴더 위치
+        String filePath = getOsFileRootPath();
+        Path path = Paths.get(filePath,originFileName);
+
+        try {
+            Files.delete(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //OS 별 파일 저장 경로 설정
@@ -175,7 +204,12 @@ public class UserController {
     @GetMapping("/deleteFamilyMember")
     public String deleteFamilyMember (@RequestParam(name="profileCode") String profileCode) {
 
-        System.out.println(profileCode + "<--------profileCode");
+        //가족 구성원 삭제 시, 프로필 사진 있다면 삭제.
+        String originFileName = userService.originFileRoot(profileCode);
+
+        if(originFileName != null) {
+            deleteFile(originFileName);
+        }
         userService.deleteFamilyMember(profileCode);
 
         return "redirect:/user/myFamily";

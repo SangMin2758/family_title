@@ -110,7 +110,7 @@
 
 <!--/* layout:decorate : 파일에서 사용자 정의로 선언한 조각에 작성한 html 코드 삽입 */-->
 <th:block layout:fragment="customContents">
-    <div class="row">
+    <div class="row" style="min-height: 500px; margin-bottom: 100px">
         <div class="col-lg-2">
         </div>
 
@@ -246,7 +246,7 @@
                                             </svg>
                                         </button>
                                         <button tabindex="0" role="button" data-toggle="popover" data-trigger="hover"
-                                                data-content="일정 관리" data-placement="bottom" type="button"
+                                                data-content="일정 관리 (아직 미구현)" data-placement="bottom" type="button"
                                                 class="btn btn-primary">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white"
                                                  class="bi bi-caret-down-fill" viewBox="0 0 16 16">
@@ -277,10 +277,10 @@
                                 <input class="image" hidden="hidden" th:value="${l.image}">
                                 <input class="detailInfo" hidden="hidden" th:value="${l.detailInfo}">
                             </div>
-                            <span class="badge text-center text-white shadow position-absolute font-weight-bold rounded-pill bg-danger"
-                                  style="transform: translateX(-25px) translateY(5px); z-index: 1;">
-                  95+
-                </span>
+<!--                            <span class="badge text-center text-white shadow position-absolute font-weight-bold rounded-pill bg-danger"-->
+<!--                                  style="transform: translateX(-25px) translateY(5px); z-index: 1;">-->
+<!--                  95+-->
+<!--                </span>-->
                         </li>
                     </ul>
                 </div>
@@ -389,10 +389,10 @@
                                 <input class="image" hidden="hidden" th:value="${l.image}">
                                 <input class="detailInfo" hidden="hidden" th:value="${l.detailInfo}">
                                 </div>
-                            <span class="badge text-center text-white shadow position-absolute font-weight-bold rounded-pill bg-danger"
-                                  style="transform: translateX(-25px) translateY(5px); z-index: 1;">
-                  95+
-                </span>
+<!--                            <span class="badge text-center text-white shadow position-absolute font-weight-bold rounded-pill bg-danger"-->
+<!--                                  style="transform: translateX(-25px) translateY(5px); z-index: 1;">-->
+<!--                  95+-->
+<!--                </span>-->
                         </li>
                     </ul>
                 </div>
@@ -534,7 +534,7 @@
         //가족 구성원 편집 클릭 시 이벤트
         $('.modifyBtn').click(function () {
             const member = $(this).parents('.member');
-            let birthDay = $('.birthday').val();
+            let birthDay = $(member).find('.birthday').val();
 
             //다른 가족 구성원 수정 폼 닫기.
             $('div.modifyShadow').find('.modifyCancleBtn').click();
@@ -581,7 +581,9 @@
                 $(member).find('.memberImage').attr('src',`/familyImage/${image}`);
             }
             $(member).find('.modifyName').val(name);
-            $(member).find('.modifyBirth').val(calculateAge(birthday));
+            if(birthday !== '') {
+                $(member).find('.modifyBirth').val(calculateAge(birthday));
+            }
             $(member).find('.modifyDetailInfo').val(detailInfo);
 
             //초록색 이펙트 삭제
@@ -640,10 +642,21 @@
 
             //프로필 사진을 변경했을 때만 사진 업로드.
             if(file !== undefined) {
+
+                // 기존 사진 있는지 조회. 있다면 삭제.
+                    $.ajax({
+                        url : '/user/originFileRoot',
+                        data : profileCode,
+                        type : 'POST',
+                        async : false //동기 방식
+                    }).fail(function(err){
+                        console.log(err);
+                    })
+
+                //사진 업로드 진행
                 $.ajax({
                     url : '/user/uploadImage',
-                    processData : false,	//기본값은 true
-                    //ajax 통신을 통해 데이터를 전송할 때, 기본적으로 key와 value값을 Query String으로 변환해서 전송.
+                    processData : false,	//기본값은 true.
                     contentType : false,	// multipart/form-data타입을 사용하기위해 false 로 지정.
                     data : formData,
                     type : 'POST',
@@ -653,6 +666,8 @@
                     let saveName = result.saveName;
                     modifyObj.image = saveName;
                     isModifyed = true;
+                }).fail(function(err){
+                    console.log(err);
                 })
             }
 

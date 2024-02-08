@@ -53,6 +53,11 @@ public class UserService {
     //추가한 가족 구성원 정보 수정
     public void modifyFamilyMember (FamilyProfile familyProfile) {userMapper.modifyFamilyMember(familyProfile);}
 
+    //가족 구성원 정보 수정 시, 등록된 프로필 사진 있는지 조회. 있다면 기존사진 삭제 후 새로운 사진 추가하기 위함.
+    public String originFileRoot (String profileCode) {
+        return userMapper.originFileRoot(profileCode);
+    }
+
     //추가한 가족 구성원 그룹관계 삭제 후 프로필 삭제
     public void deleteFamilyMember (String profileCode){
         userMapper.deleteProfileAssociation(profileCode);
